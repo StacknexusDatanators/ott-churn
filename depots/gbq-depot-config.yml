@@ -1,0 +1,22 @@
+version: v1
+name: ottbigquery
+type: depot
+tags:
+  - OTT churn
+  - bigquery
+owner: balaji
+layer: user
+depot:
+  type: BIGQUERY                                  # Depot type
+  description: Depot for OTT churn data
+  external: true
+  connectionSecret:                               # Data source specific configurations
+    - acl: rw
+      type: key-value-properties
+      data:
+        projectid: ott-churn
+        email: astronomy.balaji@gmail.com
+      files:
+        json_keyfile: ./depots/secrets/ott-churn-cff668d5be3b.json
+  spec:                                              # Data source specific configurations
+      project: ott-churn

@@ -1,0 +1,53 @@
+version: v1
+name: wf-ott-content
+type: workflow
+workspace: public
+description:  The Job Ingests OTT content from bigquery
+tags:
+  - telecom
+  - ott
+workflow:
+  title: OTT content load
+  dag:
+    - name: telco-ott-content
+      title: OTT content Dataset
+      description: This job ingest data of OTT content from BQ to icebase
+      spec:
+        tags:
+          - depot
+          - mitre
+        stack: flare:3.0
+        compute: runnable-default
+        flare:
+          job:
+            inputs:
+              - name: content_input
+                dataset: dataos://ottbigquery:content/contenttable
+            logLevel: INFO
+            outputs:
+              - name: output01
+                depot: dataos://icebase:ott_churn?acl=rw
+            steps:
+              - sink:
+                  - sequenceName: content_input
+                    datasetName: ott_content
+                    outputName: output01
+                    outputType: Iceberg
+                    description: This dataset gives details of all OTT content and their corresponding attributes.
+                    title: OTT Content Data
+                    tags:
+                      - ott
+                      - telecom
+                    outputOptions:
+                      saveMode: overwrite
+    - name: dataos-tool-ottcontent
+      spec:
+        stack: toolbox
+        compute: runnable-default
+        toolbox:
+          dataset: dataos://icebase:ott_churn/ott_content?acl=rw
+          action:
+            name: set_version
+            value: latest
+      dependencies:
+        - telco-ott-content
