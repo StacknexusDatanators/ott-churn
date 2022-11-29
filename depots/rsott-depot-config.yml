@@ -1,0 +1,25 @@
+version: v1
+name: "rsottchurn"
+type: depot
+tags:
+  - redshift
+layer: user
+depot:
+  type: REDSHIFT
+  description: Redshift ott sample data
+  spec:
+    host: devteam.670368380799.us-east-1.redshift-serverless.amazonaws.com
+    port: 5439
+    database: dev
+    bucket: tstaql1
+    relativePath: development/redshift/devteam/
+    subprotocol: redshift
+  external: true
+  connectionSecret:
+    - acl: rw
+      type: key-value-properties
+      data:
+        username: dataos_user
+        password: Data4Lyfe
+        awsaccesskeyid: AKIAZYFIRW57XCVMNB3L
+        awssecretaccesskey: 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

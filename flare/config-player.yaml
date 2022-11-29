@@ -1,0 +1,61 @@
+version: v1
+name: wf-ott-player
+type: workflow
+workspace: public
+description:  The Job Ingests OTT player from bigquery
+tags:
+  - play
+  - ott
+workflow:
+  title: OTT player load
+  dag:
+    - name: ott-player
+      title: OTT player Dataset
+      description: This job ingest data of OTT player from BQ to icebase
+      spec:
+        tags:
+          - depot
+          - ott churn
+        stack: flare:3.0
+        compute: runnable-default
+        flare:
+          job:
+            inputs:
+              - name: player_input
+                dataset: dataos://ottbigquery:player/playertable
+            logLevel: INFO
+            outputs:
+              - name: output01
+                depot: dataos://icebase:ott_churn?acl=rw
+            steps:
+              - sink:
+                  - sequenceName: player
+                    datasetName: ott_player
+                    outputName: output01
+                    outputType: Iceberg
+                    description: This dataset gives details of all OTT player and their corresponding attributes.
+                    title: OTT player Data
+                    tags:
+                      - ott
+                      - play
+                    outputOptions:
+                      saveMode: overwrite
+                sequence:
+                  - name: player
+                    sql: >
+                      select * from player_input
+                    functions:
+                      - name: snake_case
+                      - name: change_column_case
+                        case: lower
+    - name: dataos-tool-ottplayer
+      spec:
+        stack: toolbox
+        compute: runnable-default
+        toolbox:
+          dataset: dataos://icebase:ott_churn/ott_player?acl=rw
+          action:
+            name: set_version
+            value: latest
+      dependencies:
+        - ott-player

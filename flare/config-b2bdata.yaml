@@ -1,0 +1,61 @@
+version: v1
+name: wf-ott-b2bdata
+type: workflow
+workspace: public
+description:  The Job Ingests OTT b2bdata from bigquery
+tags:
+  - b2b
+  - ott
+workflow:
+  title: OTT b2bdata load
+  dag:
+    - name: ott-b2bdata
+      title: OTT b2bdata Dataset
+      description: This job ingest data of OTT b2bdata from BQ to icebase
+      spec:
+        tags:
+          - depot
+          - ott churn
+        stack: flare:3.0
+        compute: runnable-default
+        flare:
+          job:
+            inputs:
+              - name: b2bdata_input
+                dataset: dataos://ottbigquery:b2bdata/b2btable
+            logLevel: INFO
+            outputs:
+              - name: output01
+                depot: dataos://icebase:ott_churn?acl=rw
+            steps:
+              - sink:
+                  - sequenceName: b2bdata
+                    datasetName: ott_b2bdata
+                    outputName: output01
+                    outputType: Iceberg
+                    description: This dataset gives details of all OTT b2bdata and their corresponding attributes.
+                    title: OTT b2bdata Data
+                    tags:
+                      - ott
+                      - b2b
+                    outputOptions:
+                      saveMode: overwrite
+                sequence:
+                  - name: b2bdata
+                    sql: >
+                      select * from b2bdata_input
+                    functions:
+                      - name: snake_case
+                      - name: change_column_case
+                        case: lower
+    - name: dataos-tool-ottb2bdata
+      spec:
+        stack: toolbox
+        compute: runnable-default
+        toolbox:
+          dataset: dataos://icebase:ott_churn/ott_b2bdata?acl=rw
+          action:
+            name: set_version
+            value: latest
+      dependencies:
+        - ott-b2bdata

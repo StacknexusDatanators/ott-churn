@@ -14,9 +14,9 @@ depot:
     - acl: rw
       type: key-value-properties
       data:
-        projectid: ott-churn
+        projectid: ottchurnpred
         email: astronomy.balaji@gmail.com
       files:
-        json_keyfile: ./depots/secrets/ott-churn-cff668d5be3b.json
+        json_keyfile: ./depots/secrets/ottchurnpred-d91f9b1cbe26.json
   spec:                                              # Data source specific configurations
-      project: ott-churn
+      project: ottchurnpred

@@ -4,7 +4,7 @@ type: workflow
 workspace: public
 description:  The Job Ingests OTT content from bigquery
 tags:
-  - telecom
+  - play
   - ott
 workflow:
   title: OTT content load
@@ -15,7 +15,7 @@ workflow:
       spec:
         tags:
           - depot
-          - mitre
+          - ott churn
         stack: flare:3.0
         compute: runnable-default
         flare:

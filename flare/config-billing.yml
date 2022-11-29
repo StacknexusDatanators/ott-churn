@@ -1,0 +1,62 @@
+version: v1
+name: wf-ott-billing
+type: workflow
+workspace: public
+description:  The Job Ingests OTT billing from redshift
+tags:
+  - billing
+  - ott
+workflow:
+  title: OTT billing load
+  dag:
+    - name: ott-billing
+      title: OTT billing Dataset
+      description: This job ingest data of OTT billing from redshift to icebase
+      spec:
+        tags:
+          - depot
+          - ott churn
+        stack: flare:3.0
+        compute: runnable-default
+        flare:
+          job:
+            inputs:
+              - name: billing_input
+                dataset: dataos://rsottchurn:public/billing
+                format: redshift
+            logLevel: INFO
+            outputs:
+              - name: output01
+                depot: dataos://icebase:ott_churn?acl=rw
+            steps:
+              - sink:
+                  - sequenceName: billing
+                    datasetName: ott_billing
+                    outputName: output01
+                    outputType: Iceberg
+                    description: This dataset giv.es details of all OTT billing and their corresponding attributes.
+                    title: OTT billing Data
+                    tags:
+                      - ott
+                      - bill
+                    outputOptions:
+                      saveMode: overwrite
+                sequence:
+                  - name: billing
+                    sql: >
+                      select * from billing_input
+                    functions:
+                      - name: snake_case
+                      - name: change_column_case
+                        case: lower
+    - name: dataos-tool-ottbilling
+      spec:
+        stack: toolbox
+        compute: runnable-default
+        toolbox:
+          dataset: dataos://icebase:ott_churn/ott_billing?acl=rw
+          action:
+            name: set_version
+            value: latest
+      dependencies:
+        - ott-billing
