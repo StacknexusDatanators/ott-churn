@@ -1,17 +1,17 @@
 version: v1
-name: wf-ott-complaints
+name: wf-ott-billing
 type: workflow
 workspace: public
-description:  The Job Ingests OTT complaints from redshift
+description:  The Job Ingests OTT billing from S3
 tags:
-  - complaint
+  - billing
   - ott
 workflow:
-  title: OTT complaints load
+  title: OTT billing load
   dag:
-    - name: ott-complaints
-      title: OTT complaints Dataset
-      description: This job ingest data of OTT complaints from redshift to icebase
+    - name: ott-billing
+      title: OTT billing Dataset
+      description: This job ingest data of OTT billing from S3 to icebase
       spec:
         tags:
           - depot
@@ -21,42 +21,42 @@ workflow:
         flare:
           job:
             inputs:
-              - name: complaints_input
-                dataset: dataos://ottchurnrs:public/complaints
-                format: redshift
+              - name: billing_input
+                dataset: dataos://otts3data:none/Billing.csv
+                format: csv
             logLevel: INFO
             outputs:
               - name: output01
                 depot: dataos://icebase:ott_churn?acl=rw
             steps:
               - sink:
-                  - sequenceName: complaints
-                    datasetName: ott_complaints
+                  - sequenceName: billing
+                    datasetName: ott_billing
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset gives details of all OTT complaints and their corresponding attributes.
-                    title: OTT complaint Data
+                    description: This dataset giv.es details of all OTT billing and their corresponding attributes.
+                    title: OTT billing Data
                     tags:
                       - ott
-                      - complaint
+                      - bill
                     outputOptions:
                       saveMode: overwrite
                 sequence:
-                  - name: complaints
+                  - name: billing
                     sql: >
-                      select * from complaints_input
+                      select * from billing_input
                     functions:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
-    - name: dataos-tool-complaints
+    - name: dataos-tool-ottbilling
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:ott_churn/ott_complaints?acl=rw
+          dataset: dataos://icebase:ott_churn/ott_billing?acl=rw
           action:
             name: set_version
             value: latest
       dependencies:
-        - ott-complaints
+        - ott-billing
