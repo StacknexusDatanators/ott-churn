@@ -1,0 +1,25 @@
+version: v1beta1
+name: otts3data
+type: depot
+tags:
+  - telecom
+  - OTT
+owner: balaji
+layer: user
+depot:
+  type: S3                                          # Depot type
+  description: depot to load all datasets for OTT churn prediction from AWS S3 buckets
+  external: true
+  connectionSecret:                                 # Data source specific configurations
+    - acl: rw
+      type: key-value-properties
+      data:
+        awsaccesskeyid: #####
+        awsbucketname: tstaql1
+        awssecretaccesskey: #######
+  spec:                                             # Data source specific configurations
+    # default scheme "s3a"
+    scheme: s3a
+    bucket: tstaql1
+    relativePath: dataosloader/devtest/
+    format: csv

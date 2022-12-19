@@ -1,17 +1,17 @@
 version: v1
-name: wf-ott-content
+name: wf-ott-content-01
 type: workflow
 workspace: public
-description:  The Job Ingests OTT content from bigquery
+description:  The Job Ingests OTT content from S3
 tags:
-  - play
+  - content
   - ott
 workflow:
   title: OTT content load
   dag:
-    - name: telco-ott-content
+    - name: ott-content
       title: OTT content Dataset
-      description: This job ingest data of OTT content from BQ to icebase
+      description: This job ingest data of OTT content from S3 to icebase
       spec:
         tags:
           - depot
@@ -22,32 +22,41 @@ workflow:
           job:
             inputs:
               - name: content_input
-                dataset: dataos://ottbigquery:content/contenttable
+                dataset: dataos://ottbigquery:content/complaintable
+                format: csv
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:ott_churn?acl=rw
+                depot: dataos://icebase:telco_ott?acl=rw
             steps:
               - sink:
-                  - sequenceName: content_input
-                    datasetName: ott_content
+                  - sequenceName: content
+                    datasetName: ott_content_05
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset gives details of all OTT content and their corresponding attributes.
-                    title: OTT Content Data
+                    description: This dataset giv.es details of all OTT content and their corresponding attributes.
+                    title: OTT complaints Data
                     tags:
                       - ott
-                      - telecom
+                      - contents
                     outputOptions:
                       saveMode: overwrite
+                sequence:
+                  - name: content
+                    sql: >
+                      select * from content_input
+                    functions:
+                      - name: snake_case
+                      - name: change_column_case
+                        case: lower
     - name: dataos-tool-ottcontent
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:ott_churn/ott_content?acl=rw
+          dataset: dataos://icebase:ott_churn/ott_content_05?acl=rw
           action:
             name: set_version
             value: latest
       dependencies:
-        - telco-ott-content
+        - ott-content

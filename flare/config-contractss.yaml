@@ -1,17 +1,17 @@
 version: v1
-name: wf-ott-billing-01
+name: wf-ott-contract-02
 type: workflow
 workspace: public
-description:  The Job Ingests OTT billing from S3
+description:  The Job Ingests OTT contract from S3
 tags:
-  - billing
+  - contract
   - ott
 workflow:
-  title: OTT billing load
+  title: OTT contract load
   dag:
-    - name: ott-billing
-      title: OTT billing Dataset
-      description: This job ingest data of OTT billing from S3 to icebase
+    - name: ott-contract
+      title: OTT contract Dataset
+      description: This job ingest data of OTT contract from S3 to icebase
       spec:
         tags:
           - depot
@@ -21,8 +21,8 @@ workflow:
         flare:
           job:
             inputs:
-              - name: billing_input
-                dataset: dataos://ottbigquery:billing/billingtable
+              - name: contract_input
+                dataset: dataos://ottbigquery:contract/contractable
                 format: csv
             logLevel: INFO
             outputs:
@@ -30,34 +30,33 @@ workflow:
                 depot: dataos://icebase:telco_ott?acl=rw
             steps:
               - sink:
-                  - sequenceName: billing
-                    datasetName: ott_billing
+                  - sequenceName: contract
+                    datasetName: ott_contract
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset giv.es details of all OTT billing and their corresponding attributes.
-                    title: OTT billing Data
+                    description: This dataset giv.es details of all OTT contract and their corresponding attributes.
+                    title: OTT contract Data
                     tags:
                       - ott
-                      - bill
+                      - contract
                     outputOptions:
                       saveMode: overwrite
                 sequence:
-                  - name: billing
+                  - name: contract
                     sql: >
-                      select * from billing_input
+                      select * from contract_input
                     functions:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
-    - name: dataos-tool-ottbilling
+    - name: dataos-tool-ottcontract
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_billing?acl=rw
+          dataset: dataos://icebase:telco_ott/ott_contract?acl=rw
           action:
             name: set_version
             value: latest
       dependencies:
-        - ott-billing
- 
+        - ott-contract

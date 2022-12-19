@@ -1,0 +1,72 @@
+version: v1
+name: wf-ott-userdata
+type: workflow
+workspace: public
+description:  The Job Ingests OTT userdata from bigquery
+tags:
+  - userdata
+  - ott
+workflow:
+  title: OTT userdata load
+  dag:
+    - name: ott-userdata
+      title: OTT userdata Dataset
+      description: This job ingest data of OTT userdata from BQ to icebase
+      spec:
+        tags:
+          - depot
+          - ott churn
+        stack: flare:3.0
+        compute: runnable-default
+        flare:
+          job:
+            inputs:
+              - name: userdata_input
+                dataset: dataos://ottbigquery:userdata/usertable
+            logLevel: INFO
+            outputs:
+              - name: output01
+                depot: dataos://icebase:telco_ott?acl=rw
+            steps:
+              - sink:
+                  - sequenceName: userdata
+                    datasetName: ott_userdataset
+                    outputName: output01
+                    outputType: Iceberg
+                    description: This dataset gives details of all OTT userdata and their corresponding attributes.
+                    title: OTT userdata Data
+                    tags:
+                      - ott
+                      - user
+                    outputOptions:
+                      saveMode: overwrite
+                sequence:
+                  - name: userdata
+                    sql: 
+                      select * from userdata_input
+                    functions:
+                       - name: snake_case
+                       - name: change_column_case
+                         case: lower
+                       - name: any_timestamp
+                         column: dob
+                         asColumn: dob
+
+                       - name: any_timestamp
+                         column: start_date
+                         asColumn: start_date
+                         
+                       - name: any_timestamp
+                         column: validity_end
+                         asColumn: validity_end
+    - name: dataos-tool-ottuserdata
+      spec:
+        stack: toolbox
+        compute: runnable-default
+        toolbox:
+          dataset: dataos://icebase:telco_ott/ott_userdataset?acl=rw
+          action:
+            name: set_version
+            value: latest
+      dependencies:
+        - ott-userdata

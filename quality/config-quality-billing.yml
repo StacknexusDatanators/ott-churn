@@ -1,0 +1,71 @@
+version: v1
+name: wf-billing-quality
+type: workflow
+tags:
+  - bill
+  - ott
+description: The job performs metrics calculations and checks on billing data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-billing-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on billing data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - bill
+          - ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on billing data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_billing
+                dataset: dataos://icebase:telco_ott/ott_billing
+                format: iceberg
+            assertions: 
+
+#Verify whether the value of Customer ID is Unique in database
+              - sql: |
+                    SELECT
+                      count(customer_id) count_customer_id
+                    FROM
+                      ott_billing
+                    GROUP BY
+                      customer_id
+                test: 
+                  - customer_id == 1
+
+#Verify whether the value of Billing ID is Unique in database
+
+              - sql: |
+                    SELECT
+                      count(billing_id) count_billing_id
+                    FROM
+                      ott_billing
+                    GROUP BY
+                      billing_id
+                test: 
+                  - count_billing_id == 1
+#Verify whether the value of the Customer ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(customer_id) as customer
+                    FROM
+                    ott_billing
+                    WHERE
+                    customer_id IS NULL
+                tests: 
+                  - customer == 0 
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"
