@@ -1,5 +1,5 @@
 version: v1
-name: wf-profile-ott-userdata
+name: wf-profile-ott-user
 type: workflow
 tags:
   - ott
@@ -26,7 +26,7 @@ workflow:
             explain: true
             inputs:
               - name: userdata_input
-                dataset: dataos://icebase:telco_ott/ott_userdata
+                dataset: dataos://icebase:telco_ott/ott_userdataset
                 format: iceberg
             logLevel: info
             profile:

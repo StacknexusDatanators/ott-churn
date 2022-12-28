@@ -1,5 +1,5 @@
 version: v1
-name: wf-ott-complaints-01
+name: wf-ott-complaints-02
 type: workflow
 workspace: public
 description:  The Job Ingests OTT complaints from S3
@@ -38,7 +38,7 @@ workflow:
                     title: OTT complaints Data
                     tags:
                       - ott
-                      - complaints
+                      - complaint
                     outputOptions:
                       saveMode: overwrite
                 sequence:
@@ -49,6 +49,11 @@ workflow:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
+
+                      - name: any_timestamp
+                        column: issue_time
+                        asColumn: issue_time
+                                          
     - name: dataos-tool-ottcomplaints
       spec:
         stack: toolbox

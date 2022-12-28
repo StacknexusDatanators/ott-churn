@@ -1,23 +1,23 @@
 version: v1
-name: wf-profile-ott-contracts
+name: wf-profile-ott-contract
 type: workflow
 tags:
   - ott
   - contract
-description: The job performs profiling on top of ottchurn contracts data
+description: The job performs profiling on top of ottchurn contract data
 workflow:
-  title: contracts Profiler
+  title: contract Profiler
   dag:
-    - name: profile-ottchurn-contracts
-      title: contracts Data Profiler
-      description: The job performs profiling on contracts data
+    - name: profile-ottchurn-contract
+      title: contract Data Profiler
+      description: The job performs profiling on contract data
       spec:
         tags:
           - contract
           - ottchurn
         stack: flare:3.0
         compute: runnable-default
-        title: contracts Data Profiler
+        title: contract Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides
@@ -25,8 +25,8 @@ workflow:
           job:
             explain: true
             inputs:
-              - name: contracts_input
-                dataset: dataos://icebase:telco_ott/ott_contracts
+              - name: contract_input
+                dataset: dataos://icebase:telco_ott/ott_contract
                 format: iceberg
             logLevel: info
             profile:

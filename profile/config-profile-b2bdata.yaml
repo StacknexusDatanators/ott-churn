@@ -17,7 +17,9 @@ workflow:
           - ottchurn
         stack: flare:3.0
         compute: runnable-default
-        title: Depot Data Profiler
+        envs:
+          NEW_FINGERPRINT_URL: "https://wanted-panther.dataos.app/fingerprint-classification/app/v2/fingerprint/?min_records=1"
+        title: b2bdata Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides

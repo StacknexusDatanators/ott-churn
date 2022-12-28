@@ -1,17 +1,20 @@
 version: v1
-name: wf-ott-player-01
+name: wf-ott-player-02
 type: workflow
 workspace: public
-description:  The Job Ingests OTT player from bigquery
+description:  The Job Ingests OTT player from S3
 tags:
-  - play
+  - player
   - ott
 workflow:
   title: OTT player load
+  schedule:
+    cron: "0 */1 * * *"
+    concurrencyPolicy: Forbid
   dag:
     - name: ott-player
       title: OTT player Dataset
-      description: This job ingest data of OTT player from BQ to icebase
+      description: This job ingest data of OTT player from S3 to icebase
       spec:
         tags:
           - depot
@@ -20,9 +23,15 @@ workflow:
         compute: runnable-default
         flare:
           job:
+            explain: true
+            streaming:
+              batchMode: true
+              triggerMode: Once
+              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00001?acl=rw
             inputs:
               - name: player_input
                 dataset: dataos://ottbigquery:player/playertable
+                format: csv
             logLevel: INFO
             outputs:
               - name: output01
@@ -37,9 +46,9 @@ workflow:
                     title: OTT player Data
                     tags:
                       - ott
-                      - play
+                      - player
                     outputOptions:
-                      saveMode: overwrite
+                      saveMode: append
                 sequence:
                   - name: player
                     sql: >
@@ -48,6 +57,11 @@ workflow:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
+
+                      - name: any_timestamp
+                        column: session_start
+                        asColumn: session_start
+                                            
     - name: dataos-tool-ottplayer
       spec:
         stack: toolbox

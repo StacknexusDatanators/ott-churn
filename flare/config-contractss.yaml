@@ -49,6 +49,14 @@ workflow:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
+
+                      - name: any_timestamp
+                        column: contract_effective_date
+                        asColumn: contract_effective_date
+                         
+                      - name: any_timestamp
+                        column: contract_end_date
+                        asColumn: contract_end_date                   
     - name: dataos-tool-ottcontract
       spec:
         stack: toolbox
