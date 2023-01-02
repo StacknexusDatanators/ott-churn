@@ -1,24 +1,24 @@
 version: v1
-name: wf-b2bdata-quality
+name: wf-complaints-quality
 type: workflow
 tags:
-  - b2b
+  - complaints
   - ott
-description: The job performs metrics calculations and checks on b2b data
+description: The job performs metrics calculations and checks on complaints data
 workflow:
   title: Metrics and checks
   dag:
-    - name: ott-b2bdata-quality
+    - name: ott-complaints-quality
       title: Metrics and checks
-      description: The job performs metrics calculations and checks on b2b data
+      description: The job performs metrics calculations and checks on complaints data
       spec:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - b2b
+          - complaints
           - ott
         title: Metrics and checks
-        description: The job performs metrics calculations and checks on b2b data
+        description: The job performs metrics calculations and checks on complaints data
         flare:
           driver:
             coreLimit: 3000m
@@ -34,28 +34,24 @@ workflow:
             logLevel: INFO
             #validate single input
             inputs:
-              - name: ott_b2bdata
-                dataset: dataos://icebase:telco_ott/ott_b2bdata
+              - name: ott_complaints
+                dataset: dataos://icebase:telco_ott/ott_complaints
                 format: iceberg
-#Verify whether the value of Customer ID is Unique in database
+#Verify whether the value of Email ID is NOT NULL in database
 
             assertions:
-              - column: customer_id
+              - column: email_id
                 tests:
+                   - email == 0 
+                   - is_not_null= 'TRUE'
                   
-                  - count_customer_id == 1
-                  
-#Verify whether the value of Device ID is Unique in database
+#Verify whether the value of User Identifier is Unique in database
 
-              - column: device_id
+              - column: user_identifier
               
                 tests:
-                  - count_device_id == 1
-#Verify whether the value of the Premium Content in the data base is either Yes or NO 
-              
-              - column: premium_content
-                validFormat:
-                  regex: (?:'Yes'|'No') 
+                  - count_user_identifier == 1
+   
                   
 
 

@@ -1,24 +1,24 @@
 version: v1
-name: wf-b2bdata-quality
+name: wf-billing-quality
 type: workflow
 tags:
-  - b2b
+  - billing
   - ott
-description: The job performs metrics calculations and checks on b2b data
+description: The job performs metrics calculations and checks on billing data
 workflow:
   title: Metrics and checks
   dag:
-    - name: ott-b2bdata-quality
+    - name: ott-billing-quality
       title: Metrics and checks
-      description: The job performs metrics calculations and checks on b2b data
+      description: The job performs metrics calculations and checks on billing data
       spec:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - b2b
+          - billing
           - ott
         title: Metrics and checks
-        description: The job performs metrics calculations and checks on b2b data
+        description: The job performs metrics calculations and checks on billing data
         flare:
           driver:
             coreLimit: 3000m
@@ -34,8 +34,8 @@ workflow:
             logLevel: INFO
             #validate single input
             inputs:
-              - name: ott_b2bdata
-                dataset: dataos://icebase:telco_ott/ott_b2bdata
+              - name: ott_billing
+                dataset: dataos://icebase:telco_ott/ott_billing
                 format: iceberg
 #Verify whether the value of Customer ID is Unique in database
 
@@ -45,17 +45,18 @@ workflow:
                   
                   - count_customer_id == 1
                   
-#Verify whether the value of Device ID is Unique in database
+#Verify whether the value of Billing ID is Unique in database
 
-              - column: device_id
+              - column: billing_id
               
                 tests:
-                  - count_device_id == 1
-#Verify whether the value of the Premium Content in the data base is either Yes or NO 
+                  - count_billing_id == 1
+#Verify whether the value of the Customer ID is NOT NULL in the database
               
-              - column: premium_content
-                validFormat:
-                  regex: (?:'Yes'|'No') 
+              - column: customer_id
+                tests:
+                  - customer_id == 1
+                  - is_not_null= 'TRUE'
                   
 
 

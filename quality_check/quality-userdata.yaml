@@ -1,0 +1,82 @@
+version: v1
+name: wf-userdata-quality
+type: workflow
+tags:
+  - user
+  - ott
+description: The job performs metrics calculations and checks on user data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-userdata-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on user data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - user
+          - ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on user data
+        flare:
+          driver:
+            coreLimit: 3000m
+            cores: 2
+            memory: 4000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 1
+            memory: 10000m
+          job:
+            explain: true
+            logLevel: INFO
+            #validate single input
+            inputs:
+              - name: ott_userdata
+                dataset: dataos://icebase:telco_ott/ott_userdata
+                format: iceberg
+ #Verify whether the value of the Profile Id is NOT NULL in the database  
+      #value is showing 0 here
+
+            assertions:
+              - column: profile_id
+                tests:
+                  - is_not_null= 'TRUE'
+                  
+  #Verify whether the value of the DOB in the database is not greater than current data
+              - column: dob
+
+                tests:
+                  - is_date_valid(dob)
+                  - dob > datetime.datetime.now()
+  #Verify whether the value of Email is Unique in database.
+              - column: email
+                tests:
+                  - count_email == 1
+   #Verify whether the value of the start date is not greater than validity date
+              - column: start_date
+              - column: validity_date
+
+                tests:
+                  - is_date_valid(start_date)
+                  - is_date_valid(validity_end)
+                  - start_date < validity_end
+                  
+  #Verify whether the value of the status in the database is either Active or Inactive
+              - column: status
+                validFormat:
+                  regex: (?:'ACTIVE'|'INACTIVE') 
+
+  #Verify whether the value of the Upgradable in the database is either Yes or NO
+              - column: upgradable
+                validFormat:
+                  regex: (?:'Yes'|'No') 
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

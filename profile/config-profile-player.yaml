@@ -7,6 +7,9 @@ tags:
 description: The job performs profiling on top of ottchurn player data
 workflow:
   title: player Profiler
+  schedule:
+      cron: "*/20 * * * *"
+      concurrencyPolicy: Allow 
   dag:
     - name: profile-ottchurn-player
       title: player Data Profiler
@@ -18,9 +21,6 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         title: player Data Profiler
-        schedule:
-          cron: "0 0 * * *"
-          concurrencyPolicy: Forbid
         persistentVolume:
           name: persistent-v
           directory: fides
