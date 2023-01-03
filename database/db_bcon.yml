@@ -1,0 +1,11 @@
+version: v1
+name: ottchurndb                                     # database name
+type: database
+description: OTT Churn prediction database
+tags:
+  - database
+database:
+  migrate:
+    includes:
+      - ./database/migration
+    command: up

@@ -31,7 +31,7 @@ workflow:
             steps:
               - sink:
                   - sequenceName: billing
-                    datasetName: ott_billing
+                    datasetName: ott_billing_01
                     outputName: output01
                     outputType: Iceberg
                     description: This dataset giv.es details of all OTT billing and their corresponding attributes.
@@ -54,7 +54,7 @@ workflow:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_billing?acl=rw
+          dataset: dataos://icebase:telco_ott/ott_billing_01?acl=rw
           action:
             name: set_version
             value: latest

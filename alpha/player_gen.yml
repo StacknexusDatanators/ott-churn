@@ -1,0 +1,18 @@
+version: v1
+name: ott-player-gen
+type: service
+service:
+  title: Player data generator for OTT churn
+  replicas: 1
+  servicePort: 8090
+  ingress:
+    enabled: true
+    noAuthentication: true
+    path: /player-gen
+    stripPath: true
+  stack: alpha
+  compute: runnable-default
+  envs:
+    LOG_LEVEL: info
+  alpha:
+    image: joby05/ott_player_gen:v1.3

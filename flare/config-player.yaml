@@ -27,7 +27,7 @@ workflow:
             streaming:
               batchMode: true
               triggerMode: Once
-              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00001?acl=rw
+              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00002?acl=rw
             inputs:
               - name: player_input
                 dataset: dataos://ottbigquery:player/playertable

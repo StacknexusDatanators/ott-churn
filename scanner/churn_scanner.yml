@@ -1,0 +1,19 @@
+version: v1
+name: scanner-churnpred
+type: workflow
+tags:
+  - scanner
+  - ottchurn
+description: The job scans schema churn prediction tables from postgres and register as datasets
+workflow:
+  dag:
+    - name: psql-scanner
+      description: The job scans schema churn prediction tables from postgres and register as datasets
+      spec:
+        tags:
+          - scanner2
+        stack: scanner:2.0
+        compute: runnable-default
+        runAsUser: metis
+        scanner:
+          depot: dataos://ottchurndbdatabase
