@@ -2,8 +2,7 @@ version: v1
 name: wf-profile-ott-user
 type: workflow
 tags:
-  - ott
-  - user
+  - dataos.ott
 description: The job performs profiling on top of ottchurn userdata data
 workflow:
   title: userdata Profiler
@@ -13,8 +12,7 @@ workflow:
       description: The job performs profiling on userdata data
       spec:
         tags:
-          - user
-          - ottchurn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         title: userdata Data Profiler
@@ -26,7 +24,7 @@ workflow:
             explain: true
             inputs:
               - name: userdata_input
-                dataset: dataos://icebase:telco_ott/ott_userdataset
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdataset
                 format: iceberg
             logLevel: info
             profile:

@@ -1,9 +1,8 @@
 version: v1
-name: wf-player-quality-01
+name: wf-player-quality
 type: workflow
 tags:
-  - play
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on player data
 workflow:
   title: Metrics and checks
@@ -18,8 +17,7 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - player
-          - ott
+          - dataos.ott
         title: Metrics and checks
         description: The job performs metrics calculations and checks on player data
         flare:
@@ -28,7 +26,7 @@ workflow:
             logLevel: INFO
             inputs:
               - name: ott_player_02
-                dataset: dataos://icebase:telco_ott/ott_player
+                dataset: dataos://icebase:telecom_ottchurn/ott_player
                 format: iceberg
             assertions: 
             #Verify whether the value of the Event Type is NOT NULL in the database

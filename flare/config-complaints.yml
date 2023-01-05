@@ -1,21 +1,19 @@
 version: v1
-name: wf-ott-complaints-02
+name: wf-ott-complaints
 type: workflow
 workspace: public
-description:  The Job Ingests OTT complaints from S3
+description:  The Job Ingests OTT complaints from GBQ
 tags:
-  - complaint
-  - ott
+  - dataos.ott
 workflow:
   title: OTT complaints load
   dag:
     - name: ott-complaints
       title: OTT complaints Dataset
-      description: This job ingest data of OTT complaints from S3 to icebase
+      description: This job ingest data of OTT complaints from GBQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -23,22 +21,20 @@ workflow:
             inputs:
               - name: complaints_input
                 dataset: dataos://ottbigquery:complaints/complaintable
-                format: csv
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telco_ott?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: complaints
                     datasetName: ott_complaints
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset giv.es details of all OTT complaints and their corresponding attributes.
+                    description: This dataset gives details of all OTT complaints and their corresponding attributes
                     title: OTT complaints Data
                     tags:
-                      - ott
-                      - complaint
+                      - dataos.ott
                     outputOptions:
                       saveMode: overwrite
                 sequence:
@@ -53,13 +49,17 @@ workflow:
                       - name: any_timestamp
                         column: issue_time
                         asColumn: issue_time
+
+                      - name: set_type
+                        columns:
+                          mobile_number: string
                                           
     - name: dataos-tool-ottcomplaints
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_complaints?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_complaints?acl=rw
           action:
             name: set_version
             value: latest

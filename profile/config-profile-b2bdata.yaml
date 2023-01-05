@@ -2,9 +2,8 @@ version: v1
 name: wf-profile-ott-b2bdata
 type: workflow
 tags:
-  - ott
-  - b2b
-description: The job performs profiling on top of usaf b2bdata data
+  - dataos.ott
+description: The job performs profiling on top of ottchurn b2bdata data
 workflow:
   title: b2bdata Profiler
   dag:
@@ -13,8 +12,7 @@ workflow:
       description: The job performs profiling on b2bdata data
       spec:
         tags:
-          - ott
-          - ottchurn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         envs:
@@ -28,7 +26,7 @@ workflow:
             explain: true
             inputs:
               - name: b2bdata_input
-                dataset: dataos://icebase:telco_ott/ott_b2bdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata
                 format: iceberg
             logLevel: info
             profile:

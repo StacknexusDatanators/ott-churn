@@ -2,8 +2,7 @@ version: v1
 name: wf-profile-ott-billing
 type: workflow
 tags:
-  - ott
-  - bill
+  - dataos.ott
 description: The job performs profiling on top of ottchurn billing data
 workflow:
   title: billing Profiler
@@ -13,8 +12,7 @@ workflow:
       description: The job performs profiling on billing data
       spec:
         tags:
-          - bill
-          - ottchurn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         title: billing Data Profiler
@@ -26,7 +24,7 @@ workflow:
             explain: true
             inputs:
               - name: billing_input
-                dataset: dataos://icebase:telco_ott/ott_billing
+                dataset: dataos://icebase:telecom_ottchurn/ott_billing
                 format: iceberg
             logLevel: info
             profile:

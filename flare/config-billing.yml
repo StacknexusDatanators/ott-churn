@@ -1,21 +1,19 @@
 version: v1
-name: wf-ott-billing-01
+name: wf-ott-billing
 type: workflow
 workspace: public
-description:  The Job Ingests OTT billing from S3
+description:  The Job Ingests OTT billing from GBQ
 tags:
-  - billing
-  - ott
+  - dataos.ott
 workflow:
   title: OTT billing load
   dag:
     - name: ott-billing
       title: OTT billing Dataset
-      description: This job ingest data of OTT billing from S3 to icebase
+      description: This job ingest data of OTT billing from GBQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -23,22 +21,20 @@ workflow:
             inputs:
               - name: billing_input
                 dataset: dataos://ottbigquery:billing/billingtable
-                format: csv
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telco_ott?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: billing
-                    datasetName: ott_billing_01
+                    datasetName: ott_billing
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset giv.es details of all OTT billing and their corresponding attributes.
+                    description: This dataset gives details of all OTT billing and their corresponding attributes
                     title: OTT billing Data
                     tags:
-                      - ott
-                      - bill
+                      - dataos.ott
                     outputOptions:
                       saveMode: overwrite
                 sequence:
@@ -54,7 +50,7 @@ workflow:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_billing_01?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_billing?acl=rw
           action:
             name: set_version
             value: latest

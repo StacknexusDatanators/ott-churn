@@ -2,8 +2,7 @@ version: v1
 name: wf-billing-quality
 type: workflow
 tags:
-  - bill
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on billing data
 workflow:
   title: Metrics and checks
@@ -15,8 +14,7 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - bill
-          - ott
+          - dataos.ott
         title: Metrics and checks
         description: The job performs metrics calculations and checks on billing data
         flare:
@@ -25,7 +23,7 @@ workflow:
             logLevel: INFO
             inputs:
               - name: ott_billing
-                dataset: dataos://icebase:telco_ott/ott_billing
+                dataset: dataos://icebase:telecom_ottchurn/ott_billing
                 format: iceberg
             assertions: 
 

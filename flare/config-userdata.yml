@@ -4,8 +4,7 @@ type: workflow
 workspace: public
 description:  The Job Ingests OTT userdata from bigquery
 tags:
-  - userdata
-  - ott
+  - dataos.ott
 workflow:
   title: OTT userdata load
   dag:
@@ -14,8 +13,7 @@ workflow:
       description: This job ingest data of OTT userdata from BQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -26,18 +24,17 @@ workflow:
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telco_ott?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: userdata
                     datasetName: ott_userdataset
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset gives details of all OTT userdata and their corresponding attributes.
+                    description: This dataset gives details of all OTT userdata and their corresponding attributes
                     title: OTT userdata Data
                     tags:
-                      - ott
-                      - user
+                      - dataos.ott
                     outputOptions:
                       saveMode: overwrite
                 sequence:
@@ -64,7 +61,7 @@ workflow:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_userdataset?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_userdataset?acl=rw
           action:
             name: set_version
             value: latest

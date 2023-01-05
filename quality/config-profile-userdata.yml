@@ -2,30 +2,28 @@ version: v1
 name: wf-user-quality
 type: workflow
 tags:
-  - user
-  - ott
-description: The job performs metrics calculations and  checks on user data
+  - dataos.ott
+description: The job performs metrics calculations and  checks on userdata
 workflow:
   title: Metrics and checks
   dag:
     - name: ott-user-quality
       title: Metrics and checks
-      description: The job performs metrics calculations and checks on user data
+      description: The job performs metrics calculations and checks on userdata
       spec:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - user
-          - ott
+          - dataos.ott
         title: Metrics and checks
-        description: The job performs metrics calculations and checks on user data
+        description: The job performs metrics calculations and checks on userdata
         flare:
           job:
             explain: true
             logLevel: INFO
             inputs:
               - name: ott_userdataset
-                dataset: dataos://icebase:telco_ott/ott_userdataset
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdataset
                 format: iceberg
             assertions: 
 

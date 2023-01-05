@@ -1,0 +1,47 @@
+version: v1beta1
+name: wf-quality-pipeline
+type: workflow
+tags:
+- Flare
+description: Ingest data into Icebase
+workflow:
+  title: ottchurn Quality Ingest Pipeline
+  dag:
+    - name: quality-b2bdata
+      file: quality/config-quality-b2bdata.yaml
+
+    - name: quality-billing
+      file: quality/config-quality-billing.yaml
+      dependencies:
+        - quality-b2bdata
+    
+    - name: quality-complaints
+      file: quality/config-quality-complaints.yaml
+      dependencies:
+        - quality-billing
+
+    - name: quality-contract
+      file: quality/config-quality-contract.yaml
+      dependencies:
+        - quality-complaints
+
+    - name: quality-player
+      file: quality/config-quality-player.yaml
+      dependencies:
+        - quality-contract
+
+    - name: quality-userdata
+      file: quality/config-quality-userdata.yaml
+      dependencies:
+        - quality-player
+
+    - name: checks-data-tool
+      file: quality/checks-data-tool.yaml
+      dependencies:
+        - quality-userdata
+
+    - name: metrix-data-tool
+      file: quality/data-tool-metrix.yaml
+      dependencies:
+        - checks-data-tool
+

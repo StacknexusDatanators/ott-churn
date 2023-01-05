@@ -1,9 +1,8 @@
 version: v1
-name: wf-ott-contract-02
+name: wf-ott-contract
 type: workflow
 tags:
-  - contract
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on contract data
 workflow:
   title: Metrics and checks
@@ -15,8 +14,7 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - contract
-          - ott
+          - dataos.ott
         title: Metrics and checks
         description: The job performs metrics calculations and checks on contract data
         flare:
@@ -25,7 +23,7 @@ workflow:
             logLevel: INFO
             inputs:
               - name: ott_contract
-                dataset: dataos://icebase:telco_ott/ott_contract
+                dataset: dataos://icebase:telecom_ottchurn/ott_contract
                 format: iceberg
             assertions: 
 

@@ -2,8 +2,7 @@ version: v1
 name: wf-complaints-quality
 type: workflow
 tags:
-  - complaint
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on complaints data
 workflow:
   title: Metrics and checks
@@ -15,8 +14,7 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - complaint
-          - ott
+          - dataos.ott
         title: Metrics and checks
         description: The job performs metrics calculations and checks on complaints data
         flare:
@@ -25,7 +23,7 @@ workflow:
             logLevel: INFO
             inputs:
               - name: ott_complaints
-                dataset: dataos://icebase:telco_ott/ott_complaints
+                dataset: dataos://icebase:telecom_ottchurn/ott_complaints
                 format: iceberg
             assertions: 
 

@@ -4,8 +4,7 @@ type: workflow
 workspace: public
 description:  The Job Ingests OTT b2bdata from bigquery
 tags:
-  - b2b
-  - ott
+  - dataos.ott
 workflow:
   title: OTT b2bdata load
   dag:
@@ -14,8 +13,7 @@ workflow:
       description: This job ingest data of OTT b2bdata from BQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -26,18 +24,17 @@ workflow:
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telco_ott?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: b2bdata
                     datasetName: ott_b2bdata
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset gives details of all OTT b2bdata and their corresponding attributes.
+                    description: This dataset gives details of all OTT b2bdata and their corresponding attributes
                     title: OTT b2bdata Data
                     tags:
-                      - ott
-                      - b2b
+                      - dataos.ott
                     outputOptions:
                       saveMode: overwrite
                 sequence:
@@ -48,12 +45,13 @@ workflow:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
+
     - name: dataos-tool-ottb2bdata
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_b2bdata?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata?acl=rw
           action:
             name: set_version
             value: latest

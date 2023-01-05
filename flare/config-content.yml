@@ -2,7 +2,7 @@ version: v1
 name: wf-ott-content-01
 type: workflow
 workspace: public
-description:  The Job Ingests OTT content from S3
+description:  The Job Ingests OTT content from GBQ
 tags:
   - content
   - ott
@@ -11,7 +11,7 @@ workflow:
   dag:
     - name: ott-content
       title: OTT content Dataset
-      description: This job ingest data of OTT content from S3 to icebase
+      description: This job ingest data of OTT content from GBQ to icebase
       spec:
         tags:
           - depot
@@ -23,7 +23,6 @@ workflow:
             inputs:
               - name: content_input
                 dataset: dataos://ottbigquery:content/complaintable
-                format: csv
             logLevel: INFO
             outputs:
               - name: output01
@@ -31,7 +30,7 @@ workflow:
             steps:
               - sink:
                   - sequenceName: content
-                    datasetName: ott_content_05
+                    datasetName: ott_content
                     outputName: output01
                     outputType: Iceberg
                     description: This dataset giv.es details of all OTT content and their corresponding attributes.

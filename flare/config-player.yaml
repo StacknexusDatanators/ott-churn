@@ -1,27 +1,25 @@
 version: v1
-name: wf-ott-player-02
+name: wf-ott-player
 type: workflow
 workspace: public
-description:  The Job Ingests OTT player from S3
+description:  The Job Ingests OTT player from bigquery
 tags:
-  - player
-  - ott
+  - dataos.ott
 workflow:
   title: OTT player load
-  schedule:
-    cron: "0 */1 * * *"
-    concurrencyPolicy: Forbid
+  #schedule:                         
+   # cron: "0 */1 * * *"
+    #concurrencyPolicy: Forbid 
   dag:
     - name: ott-player
       title: OTT player Dataset
-      description: This job ingest data of OTT player from S3 to icebase
+      description: This job ingest data of OTT player from BQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
-        flare:
+      flare:
           job:
             explain: true
             streaming:
@@ -35,7 +33,7 @@ workflow:
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telco_ott?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: player
@@ -45,10 +43,17 @@ workflow:
                     description: This dataset gives details of all OTT player and their corresponding attributes.
                     title: OTT player Data
                     tags:
-                      - ott
-                      - player
+                      - dataos.ott
                     outputOptions:
                       saveMode: append
+
+                      iceberg:
+                        partitionSpec:
+                          - type: identity
+                            column: event_type
+                          - type: month
+                            column: session_start
+                            name: month_partitioned
                 sequence:
                   - name: player
                     sql: >
@@ -61,13 +66,13 @@ workflow:
                       - name: any_timestamp
                         column: session_start
                         asColumn: session_start
-                                            
+
     - name: dataos-tool-ottplayer
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telco_ott/ott_player?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_player?acl=rw
           action:
             name: set_version
             value: latest
