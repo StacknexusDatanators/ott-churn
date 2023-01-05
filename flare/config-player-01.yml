@@ -53,6 +53,9 @@ workflow:
                           - type: month
                             column: session_start
                             name: month_partitioned
+                        properties:
+                          write.format.default: parquet
+                          write.metadata.compression-codec: gzip
                 sequence:
                   - name: player
                     sql: >
