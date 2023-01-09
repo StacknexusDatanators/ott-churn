@@ -1,10 +1,9 @@
 version: v1
 name: wf-ott-player
 type: workflow
-workspace: public
-description:  The Job Ingests OTT player from bigquery
 tags:
   - dataos.ott
+description: The Job Ingests OTT player from bigquery
 workflow:
   title: OTT player load
   schedule:                         
@@ -13,22 +12,21 @@ workflow:
   dag:
     - name: ott-player
       title: OTT player Dataset
-      description: This job ingest data of OTT player from BQ to icebase
       spec:
         tags:
           - dataos.ott
         stack: flare:3.0
         compute: runnable-default
-      flare:
+        flare:
           driver:
-              coreLimit: 1200m
-              cores: 1
-              memory: 1024m
+            coreLimit: 1200m
+            cores: 1
+            memory: 1024m
           executor:
-              coreLimit: 1200m    
-              cores: 1
-              instances: 1
-              memory: 1024m
+            coreLimit: 1200m    
+            cores: 1
+            instances: 1
+            memory: 1024m
           job:
             explain: true
             streaming:
@@ -38,35 +36,34 @@ workflow:
             inputs:
               - name: player_input
                 dataset: dataos://ottbigquery:player/playertable
-                format: csv
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: player
+                dataset: dataos://icebase:telecom_ottchurn/ott_player?acl=rw
+                format: Iceberg
+                description: This dataset gives details of all OTT player and their corresponding attributes.
+                tags:
+                  - dataos.ott
+                title: OTT player Data
+                options:
+                  saveMode: overwrite
+                  sort:
+                    mode: partition
+                    columns:
+                      - name: session_start
+                        order: desc 
+                  iceberg:
+                    partitionSpec:
+                        - type: day
+                          column: session_start
+                          name: day
+                    properties:
+                      write.format.default: parquet
+                      write.metadata.compression-codec: gzip
             steps:
-              - sink:
-                  - sequenceName: player
-                    datasetName: ott_player
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT player and their corresponding attributes.
-                    title: OTT player Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: append
-                      iceberg:
-                        partitionSpec:
-                          - type: identity
-                            column: event_type
-                          - type: month
-                            column: session_start
-                            name: month_partitioned
-                        properties:
-                          write.format.default: parquet
-                          write.metadata.compression-codec: gzip
-                sequence:
+              - sequence:
                   - name: player
+                    doc: Pick all the columns from player input table, perform some transformations and load to icebase
                     sql: >
                       select * from player_input
                     functions:
