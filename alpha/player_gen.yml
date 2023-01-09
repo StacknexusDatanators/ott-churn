@@ -15,4 +15,4 @@ service:
   envs:
     LOG_LEVEL: info
   alpha:
-    image: joby05/ott_player_gen:v1.3
+    image: joby05/ott_player_gen:v1.4
