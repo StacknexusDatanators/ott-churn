@@ -1,0 +1,18 @@
+version: v1
+name: ott-pred-pipeline
+type: service
+service:
+  title: Logistic Regression prediction for OTT churn
+  replicas: 1
+  servicePort: 8094
+  ingress:
+    enabled: true
+    noAuthentication: true
+    path: /ott-pred
+    stripPath: true
+  stack: alpha
+  compute: runnable-default
+  envs:
+    LOG_LEVEL: info
+  alpha:
+    image: joby05/ott_pred:v1.3
