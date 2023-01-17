@@ -1,0 +1,42 @@
+version: v1
+name: wf-player-quality
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and checks on player data
+workflow:
+  title: Metrics and checks
+  #schedule:
+  #  cron: "0 0 * * *"
+  #  concurrencyPolicy: Forbid
+  dag:
+    - name: ott-player-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on player data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - dataos.ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on player data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_player_02
+                dataset: dataos://icebase:telecom_ottchurn/ott_player
+                format: iceberg
+            assertions: 
+            #Verify whether the value of the Event Type is Unique in database.
+              - column: event_type
+                tests: 
+                 - distinct_count == 1
+                  
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

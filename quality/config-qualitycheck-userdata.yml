@@ -1,0 +1,46 @@
+version: v1
+name: wf-user-quality
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and  checks on userdata
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-user-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on userdata
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - dataos.ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on userdata
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_userdataset
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdataset
+                format: iceberg
+            assertions: 
+
+      #Verify whether the value of the Profile Id is Unique in database.
+      
+              - column: profile_id
+                test: 
+                  - distinct_count == 1
+
+      #Verify whether the value of Email is Unique in database.
+              - column: email
+                test: 
+                  - distinct_count == 1
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

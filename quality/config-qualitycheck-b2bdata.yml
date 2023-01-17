@@ -1,0 +1,47 @@
+version: v1
+name: wf-b2bdata-quality
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and checks on b2bdata data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-b2bdata-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on b2bdata data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - dataos.ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on b2bdata data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_b2bdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata
+                format: iceberg
+            assertions: 
+
+#Verify whether the value of Customer ID is Unique in database
+
+              - column: customer_id
+                test: 
+                  - distinct_count == 1
+
+#Verify whether the value of Device ID is Unique in database
+
+              - column: device_id
+                test: 
+                  - distinct_count == 1
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

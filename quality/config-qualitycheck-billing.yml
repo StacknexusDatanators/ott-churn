@@ -1,0 +1,45 @@
+version: v1
+name: wf-billing-quality
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and checks on billing data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-billing-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on billing data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - dataos.ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on billing data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_billing
+                dataset: dataos://icebase:telecom_ottchurn/ott_billing
+                format: iceberg
+            assertions: 
+
+#Verify whether the value of Customer ID is Unique in database
+              - column: customer_id
+                test: 
+                  - distinct_count == 1
+
+#Verify whether the value of Billing ID is Unique in database
+              - column: billing_id                      
+                test: 
+                  - distinct_count == 1
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"
