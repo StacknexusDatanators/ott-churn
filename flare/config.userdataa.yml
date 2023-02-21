@@ -4,62 +4,71 @@ type: workflow
 workspace: public
 description:  The Job Ingests OTT userdata from bigquery
 tags:
-  - userdata
-  - ott
+  - dataos.ott
 workflow:
   title: OTT userdata load
+  #schedule:                         
+   # cron: "0 */1 * * *"
+    #concurrencyPolicy: Forbid 
   dag:
     - name: ott-userdata
       title: OTT userdata Dataset
-      description: This job ingest data of OTT userdata from BQ to icebase
+      description: This job ingest data of OTT user from BQ to icebase
       spec:
         tags:
-          - depot
-          - ott churn
+          - dataos.ott
         stack: flare:3.0
         compute: runnable-default
-        flare:
+      flare:
           job:
+            explain: true
+            streaming:
+              batchMode: true
+              triggerMode: Once
+              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-user/test/user-injest-00002?acl=rw
             inputs:
               - name: userdata_input
-                dataset: dataos://ottbigquery:userdata/usertable
+                dataset: dataos://ottbigquery:user/usertable
+                format: csv
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:ott_churn?acl=rw
+                depot: dataos://icebase:telecom_ottchurn?acl=rw
             steps:
               - sink:
-                  - sequenceName: userdata
-                    datasetName: ott_userdata
+                  - sequenceName: user
+                    datasetName: ott_userdataset
                     outputName: output01
                     outputType: Iceberg
-                    description: This dataset gives details of all OTT userdata and their corresponding attributes.
-                    title: OTT userdata Data
+                    description: This dataset gives details of all OTT user and their corresponding attributes.
+                    title: OTT user Data
                     tags:
-                      - ott
-                      - user
+                      - dataos.ott
                     outputOptions:
                       saveMode: overwrite
+
+                      iceberg:
+                        partitionSpec:
+                          - type: identity
+                            column: state
+                          - type: month
+                            column: country
+                            name: month_partitioned
                 sequence:
-                  - name: userdata
+                  - name: user
                     sql: >
                       select * from userdata_input
                     functions:
                       - name: snake_case
                       - name: change_column_case
                         case: lower
-                      - name: set_type
-                        columns: 
-                          dob: timestamp
-                          mobile_number: int
-                          start_date: timestamp
-                          validity_end: timestamp
+
     - name: dataos-tool-ottuserdata
       spec:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:ott_churn/ott_userdata?acl=rw
+          dataset: dataos://icebase:telecom_ottchurn/ott_userdataset?acl=rw
           action:
             name: set_version
             value: latest

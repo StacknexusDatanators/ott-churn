@@ -1,22 +1,21 @@
 version: v1
-name: wf-profile-ott-player
+name: wf-profile-ott-userltd
 type: workflow
 tags:
-  - dataos.ott
-description: The job performs profiling on top of ottchurn player data
+  - dataosltd.ott
+description: The job performs profiling on top of ottchurn userdata data
 workflow:
-  title: player Profiler
-  
+  title: userdata Profiler
   dag:
-    - name: profile-ottchurn-player
-      title: player Data Profiler
-      description: The job performs profiling on player data
+    - name: profile-ottchurn-userdata
+      title: userdata Data Profiler
+      description: The job performs profiling on userdata data
       spec:
         tags:
-          - dataos.ott
+          - dataosltd.ott
         stack: flare:3.0
         compute: runnable-default
-        title: player Data Profiler
+        title: userdata Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides
@@ -24,8 +23,8 @@ workflow:
           job:
             explain: true
             inputs:
-              - name: player_input
-                dataset: dataos://icebase:telecom_ottchurn/ott_player
+              - name: userdata_input
+                dataset: dataos://icebase:telecomltd_ottchurn/ott_userdatasetltd
                 format: iceberg
             logLevel: info
             profile:

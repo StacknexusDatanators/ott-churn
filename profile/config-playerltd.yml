@@ -1,8 +1,8 @@
 version: v1
-name: wf-profile-ott-player
+name: wf-profile-ott-playerltd
 type: workflow
 tags:
-  - dataos.ott
+  - dataosltd.ott
 description: The job performs profiling on top of ottchurn player data
 workflow:
   title: player Profiler
@@ -13,7 +13,7 @@ workflow:
       description: The job performs profiling on player data
       spec:
         tags:
-          - dataos.ott
+          - dataosltd.ott
         stack: flare:3.0
         compute: runnable-default
         title: player Data Profiler
@@ -25,7 +25,7 @@ workflow:
             explain: true
             inputs:
               - name: player_input
-                dataset: dataos://icebase:telecom_ottchurn/ott_player
+                dataset: dataos://icebase:telecomltd_ottchurn/ott_playerltd
                 format: iceberg
             logLevel: info
             profile:

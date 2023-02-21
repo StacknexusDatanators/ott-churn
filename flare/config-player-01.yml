@@ -7,9 +7,9 @@ tags:
   - dataos.ott
 workflow:
   title: OTT player load
-  schedule:                         
-    cron: "0 */1 * * *"
-    concurrencyPolicy: Forbid 
+ # schedule:                         
+  #  cron: "0 */1 * * *"
+   # concurrencyPolicy: Forbid 
   dag:
     - name: ott-player
       title: OTT player Dataset

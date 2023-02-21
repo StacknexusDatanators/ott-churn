@@ -1,0 +1,11 @@
+version: v1
+name: fuel-raw-data-pipline
+type: workflow
+tags:
+  - Flare
+description: Ingest data into Icebase
+workflow:
+  title: Fuel Ingest Pipeline
+  dag:
+  - name: raw-aoc
+    file: flare/raw-data/config-air-control-center.yaml

@@ -1,20 +1,20 @@
 version: v1
-name: wf-ott-player
+name: wf-ott-playerltd
 type: workflow
 tags:
-  - dataos.ott
+  - dataosltd.ott
 description: The Job Ingests OTT player from bigquery
 workflow:
   title: OTT player load
-  #schedule:                         
-   # cron: "0 */1 * * *"
-    #concurrencyPolicy: Forbid 
+  # schedule:                         
+  #   cron: "0 */1 * * *"
+  #   concurrencyPolicy: Forbid 
   dag:
     - name: ott-player
       title: OTT player Dataset
       spec:
         tags:
-          - dataos.ott
+          - dataosltd.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -39,11 +39,11 @@ workflow:
             logLevel: INFO
             outputs:
               - name: player
-                dataset: dataos://icebase:telecom_ottchurn/ott_player?acl=rw
+                dataset: dataos://icebase:telecomltd_ottchurn/ott_playerltd?acl=rw
                 format: Iceberg
                 description: This dataset gives details of all OTT player and their corresponding attributes.
                 tags:
-                  - dataos.ott
+                  - dataosltd.ott
                 title: OTT player Data
                 options:
                   saveMode: overwrite
@@ -64,7 +64,7 @@ workflow:
               - sequence:
                   - name: player
                     doc: Pick all the columns from player input table, perform some transformations and load to icebase
-                    sql: >
+                    sql: > 
                       select * from player_input
                     functions:
                       - name: snake_case
@@ -78,7 +78,7 @@ workflow:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telecom_ottchurn/ott_player?acl=rw
+          dataset: dataos://icebase:telecomltd_ottchurn/ott_playerltd?acl=rw
           action:
             name: set_version
             value: latest

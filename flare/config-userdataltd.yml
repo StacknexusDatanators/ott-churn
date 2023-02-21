@@ -1,10 +1,10 @@
 version: v1
-name: wf-ott-userdata
+name: wf-ott-userdataltd
 type: workflow
 workspace: public
 description:  The Job Ingests OTT userdata from bigquery
 tags:
-  - dataos.ott
+  - dataosltd.ott
 workflow:
   title: OTT userdata load
   dag:
@@ -13,7 +13,7 @@ workflow:
       description: This job ingest data of OTT userdata from BQ to icebase
       spec:
         tags:
-          - dataos.ott
+          - dataosltd.ott
         stack: flare:3.0
         compute: runnable-default
         flare:
@@ -24,23 +24,23 @@ workflow:
             logLevel: INFO
             outputs:
               - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+                depot: dataos://icebase:telecomltd_ottchurn?acl=rw
             steps:
               - sink:
                   - sequenceName: userdata
-                    datasetName: ott_userdataset
+                    datasetName: ott_userdatasetltd
                     outputName: output01
                     outputType: Iceberg
                     description: This dataset gives details of all OTT userdata and their corresponding attributes
                     title: OTT userdata Data
                     tags:
-                      - dataos.ott
+                      - dataosltd.ott
                     outputOptions:
                       saveMode: overwrite
                 sequence:
                   - name: userdata
                     sql: 
-                      select * from userdata_input
+                      select * from userdata_input limit 700
                     functions:
                        - name: snake_case
                        - name: change_column_case
@@ -61,7 +61,7 @@ workflow:
         stack: toolbox
         compute: runnable-default
         toolbox:
-          dataset: dataos://icebase:telecom_ottchurn/ott_userdataset?acl=rw
+          dataset: dataos://icebase:telecomltd_ottchurn/ott_userdatasetltd?acl=rw
           action:
             name: set_version
             value: latest
