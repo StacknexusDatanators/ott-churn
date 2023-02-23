@@ -49,6 +49,18 @@ workflow:
                       billing_id
                 test: 
                   - count_billing_id == 1
+                
+#Verify whether the value of the Billing ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(billing_id) as billing
+                    FROM
+                    ott_billing
+                    WHERE
+                    billing_id IS NULL
+                tests: 
+                  - billing == 0 
 #Verify whether the value of the Customer ID is NOT NULL in the database
 
               - sql: |

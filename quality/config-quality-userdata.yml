@@ -119,6 +119,106 @@ workflow:
                 tests: 
                   - upgrad == 1
 
+#Verify whether the value of Mobile Number  is Unique in database
+              - sql:
+                    SELECT 
+                      count(mobile_number) count_mobile_number
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      mobile_number
+
+                test:
+                  -count_mobile_number == 1 
+
+#Verify whether the value of the Mobile Number is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(mobile_number) as mobilenumber
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    mobile_number IS NULL
+                tests: 
+                  - mobilenumber == 0 
+
+
+#Verify whether the value of Customer ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(customer_id) count_customer_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      customer_id
+
+                test:
+                  -count_customer_id == 1 
+
+#Verify whether the value of the Customer ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(customer_id) as customerid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    customer_id IS NULL
+                tests: 
+                  - customerid == 0 
+
+#Verify whether the value of PACK ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(pack_id) count_pack_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      pack_id
+
+                test:
+                  -count_pack_id == 1 
+
+#Verify whether the value of the PACK ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(pack_id) as packid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    pack_id IS NULL
+                tests: 
+                  - packid == 0 
+
+
+#Verify whether the value of CONTRACT ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(contract_id) count_contract_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      contract_id
+
+                test:
+                  -count_contract_id == 1 
+
+#Verify whether the value of the CONTRACT ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(contract_id) as contractid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    contract_id IS NULL
+                tests: 
+                  - contractid == 0 
+
+
+
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer
             - spark.sql.shuffle.partitions: "10"

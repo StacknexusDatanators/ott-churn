@@ -39,6 +39,17 @@ workflow:
                 test: 
                   - count_customer_id == 1
 
+#Verify whether the value of the Customer ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(customer_id) as customer
+                    FROM
+                    ott_b2bdata
+                    WHERE
+                    customer_id IS NULL
+                tests: 
+                  - customer == 0 
 #Verify whether the value of Device ID is Unique in database
 
               - sql: |
@@ -50,6 +61,66 @@ workflow:
                       device_id
                 test: 
                   - count_device_id == 1
+              
+#Verify whether the value of the Device ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(device_id) as device
+                    FROM
+                    ott_b2bdata
+                    WHERE
+                    device_id IS NULL
+                tests: 
+                  - device == 0 
+
+#Verify whether the value of Partner ID  is Unique in database
+
+              - sql:
+                    SELECT 
+                      count(partner_id) count_partner_id
+                    FROM 
+                      ott_b2bdata
+                    GROUP BY
+                      partner_id
+                test:
+                  -count_device_id == 1
+
+#Verify whether the value of the Partner ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(partner_id) as partner
+                    FROM
+                    ott_b2bdata
+                    WHERE
+                    partner_id IS NULL
+                tests: 
+                  - partner == 0 
+#Verify whether the value of Asset ID  is Unique in database
+              - sql:
+                    SELECT 
+                      count(asset_id) count_asset_id
+                    FROM
+                      ott_b2bdata
+                    GROUP BY 
+                      asset_id
+
+                test:
+                  -count_device_id == 1 
+
+#Verify whether the value of the Asset ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(asset_id) as asset
+                    FROM
+                    ott_b2bdata
+                    WHERE
+                    asset_id IS NULL
+                tests: 
+                  - asset == 0 
+
 #Verify whether the value of the Premium Content in the data base is either Yes or NO 
 
               - sql: |

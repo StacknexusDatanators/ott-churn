@@ -94,6 +94,29 @@ workflow:
                     1
                 tests: 
                   - start_position == 1
+            
+#Verify whether the value of User ID is Unique in database
+              - sql: |
+                    SELECT
+                      count(user_id) count_user_id
+                    FROM
+                      ott_player_02
+                    GROUP BY
+                      user_id
+                test: 
+                  - count_user_id == 1
+
+#Verify whether the value of the User ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(user_id) as user
+                    FROM
+                    ott_player_02
+                    WHERE
+                    user_id IS NULL
+                tests: 
+                  - user == 0 
                   
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer
