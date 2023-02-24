@@ -1,0 +1,791 @@
+name: churnpred
+contract: ott
+description: Contract for the OTT Users to predict churn 
+tags: 
+  - ott_churn
+owner: balaji 
+entities:
+  - name: userdataset
+    sql:
+      query:
+      >
+        Select
+          mobile_number,
+          email,
+          profile_id,
+          customer_id,
+          dob,
+          gender,
+          first_name,
+          last_name,
+          pack_id,
+          start_date,
+          validity_end,
+          status,
+          upgradable,
+          country,
+          state,
+          zipcode,
+          contract_id,
+          preferred_language
+        from 
+           icebase.telecom_ottchurn.ott_userdataset
+
+      columns:
+        - name: mobile_number 
+        - name: email 
+        - name: profile_id 
+        - name: customer_id 
+        - name: dob 
+        - name: gender 
+        - name: first_name 
+        - name: last_name 
+        - name: pack_id 
+        - name: start_date  
+        - name: validity_end 
+        - name: status 
+        - name: upgradable 
+        - name: country 
+        - name: state 
+        - name: zipcode  
+        - name: contract_id 
+        - name: preferred_language 
+      verified: true 
+      tables: 
+        - icebase.telecom_ottchurn.userdataset
+
+    fields: 
+      - name: email 
+        type: string 
+        column: email
+
+      - name: profile_id 
+        type: string 
+        column: profile_id
+
+      - name: mobile_number 
+        type: string 
+        column: mobile_number 
+
+      - name: customer_id  
+        type: string 
+        primary: true 
+        column: customer_id  
+
+      - name: dob 
+        type: date
+        column: dob 
+
+      - name: gender 
+        type: string 
+        column: gender 
+        
+      - name: first_name 
+        type: string 
+        column: first_name 
+
+      - name: last_name 
+        type: string 
+        column: last_name 
+
+      - name: pack_id 
+        type: string
+        column: pack_id 
+
+      - name: start_date 
+        type: date 
+        column: start_date 
+
+      - name: validity_end 
+        type: date 
+        column: validity_end 
+
+      - name: status 
+        type: string 
+        column: status 
+
+      - name: upgradable 
+        type: string 
+        column: upgradable 
+
+      - name: country 
+        type: string 
+        column: country 
+
+      - name: state 
+        type: string 
+        column: state 
+
+      - name: zipcode 
+        type: string 
+        column: zipcode 
+
+      - name: contract_id 
+        type: string 
+        column: contract_id 
+
+      - name: preferred_language 
+        type: string 
+        column: preferred_language 
+
+ 
+
+    measures:
+      - name: total_customers
+        sql_snippet: ${userdataset.customer_id}
+        type: count
+        description: Total number of customers
+ 
+      - name: total_language
+        sql_snippet: ${userdataset.preferred_language}}
+        type: count
+        description: Total types of language preferred
+
+    relationships:
+      - type: 1:N
+        field: profile_id
+        target:
+          name: player
+          field: user_id
+
+      - type: 1:N
+        field: customer_id
+        target:
+          name: complaints
+          field: customer_id
+      - type: 1:N
+        field: customer_id
+        target:
+          name: contract
+          field: customer_id
+
+      - type : 1:N
+        field: customer_id
+        target:
+          name: billing
+          field: customer_id
+
+      - type : 1:N
+        field: customer_id
+        target: 
+          name: b2bdata
+          field: customer_id
+
+  - name: player
+    sql:
+      query:
+      >
+        Select 
+          user_id, 
+          event_type,
+          session_start,
+          timezone,
+          subscribed, 
+          platform, 
+          partner_id,
+          application_version,
+          location,
+          hardware,
+          operating_system,
+          premium_content_type,
+          network_type,
+          connection_speed,
+          video_type,
+          player_name,
+          player_version,
+          content_format,
+          drm,
+          cdn,
+          delivery_protocol,
+          playing_rate,
+          starting_bitrate,
+          video_resolution,
+          start_position,
+          end_position,
+          device_id,
+          video_position, 
+          duration
+        from 
+           icebase.telecom_ottchurn.ott_player
+
+      columns:
+        - name: user_id 
+        - name: event_type 
+        - name: session_start
+        - name: timezone 
+        - name: subscribed 
+        - name: platform
+        - name: partner_id 
+        - name: application_version 
+        - name: location 
+        - name: hardware 
+        - name: operating_system 
+        - name: premium_content_type 
+        - name: network_type 
+        - name: connection_speed 
+        - name: video_type 
+        - name: player_name 
+        - name: player_version 
+        - name: content_format 
+        - name: drm 
+        - name: cdn 
+        - name: delivery_protocol 
+        - name: playing_rate 
+        - name: starting_bitrate 
+        - name: video_resolution 
+        - name: start_position 
+        - name: end_position 
+        - name: device_id 
+        - name: video_position 
+        - name: duration 
+      verified: true 
+      tables: 
+       - icebase.telecom_ottchurn.players 
+    fields: 
+      - name: user_id 
+        type: string 
+        primary: true
+        column: user_id
+
+      - name: event_type
+        type: string
+        column: event_type
+
+      - name: session_start
+        type: string
+        column: session_start
+
+      - name: timezone
+        type: string
+        column: timezone
+
+      - name: subscribed
+        type: string
+        column: subscribed
+
+      - name: platform
+        type: string
+        column: platform
+
+      - name: partner_id
+        type: string
+        column: partner_id
+
+      - name: application_version
+        type: number
+        column: application_version
+
+      - name: location
+        type: string
+        column: location
+
+      - name: hardware
+        type: string
+        column: hardware
+
+      - name: operating_system
+        type: string
+        column: operating_system   
+
+      - name: premium_content_type
+        type: string
+        column: premium_content_type
+
+      - name: network_type
+        type: string
+        column: network_type
+
+      - name: connection_speed
+        type: string
+        column: connection_speed   
+
+      - name: video_type
+        type: string
+        column: video_type
+
+      - name: player_name
+        type: string
+        column: player_name
+
+      - name: player_version
+        type: string
+        column: player_version
+
+      - name: content_format
+        type: string
+        column: content_format   
+
+      - name: cdn
+        type: string
+        column: cdn
+
+      - name: drm
+        type: string
+        column: drm
+
+      - name: delivery_protocol
+        type: string
+        column: delivery_protocol 
+
+      - name: playing_rate
+        type: string
+        column: playing_rate
+
+      - name: starting_bitrate
+        type: string
+        column: starting_bitrate   
+
+      - name: video_resolution 
+        type: string
+        column: video_resolution
+
+      - name: start_position
+        type: string
+        column: start_position
+
+      - name: end_position
+        type: string
+        column: end_position
+       
+      - name: device_id
+        type: string
+        column: device_id
+
+      - name: video_position
+        type: string
+        column: video_position
+ 
+      - name: duration
+        type: string
+        column: duration
+
+    measures:
+      - name: total_players
+        sql_snippet: ${player.user_id}
+        type: count
+        description: Total number of players
+
+      - name: total_delivery_protocol 
+        sql_snippet: ${player.delivery_protocol} 
+        type: count
+        description: Total number of delivery protocol
+ 
+      - name: total_videotype
+        sql_snippet: ${player.video_type}
+        type: count
+        description: Total types of video
+
+      - name: total_networktype
+        sql_snippet: ${player.network_type} 
+        type: count
+        description: Total types of network
+
+      - name: total_operatingsystem
+        sql_snippet: ${player.operating_system}
+        type: count
+        description: Total types of operating system
+
+      - name: total_hardware
+        sql_snippet: ${player.hardware} 
+        type: count
+        description: Total types of hardware
+
+
+  - name: contract
+    sql: 
+      query:
+      >
+        SELECT 
+          contract_id,
+          customer_id,
+          complaint_id,
+          contract_description,
+          contract_amount,
+          currency_code,
+          contract_effective_date	,
+          contract_end_date,
+          contract_term,
+          slascheme_id,
+          customer_segment
+        from 
+          icebase.telecom_ottchurn.ott_contract
+
+      columns:
+        - name: contract_id 
+        - name: customer_id
+        - name: complaint_id
+        - name: contract_description 
+        - name: contract_amount 
+        - name: currency_code 
+        - name: contract_effective_date 
+        - name: contract_end_date 
+        - name: contract_term 
+        - name: slascheme_id 
+        - name: customer_segment 
+      verified: true 
+      tables: 
+       - icebase.telecom_ottchurn.contract
+    fields: 
+      - name: contract_id 
+        type: string 
+        primary: true 
+        column: contract_id
+
+      - name: customer_id 
+        type: string 
+        column: customer_id     
+
+      - name: complaint_id 
+        type: string 
+        column: complaint_id
+
+      - name: contract_description 
+        type: string 
+        column: contract_description
+
+      - name: contract_amount 
+        type: number
+        column: contract_amount
+
+      - name: currency_code 
+        type: string 
+        column: currency_code
+
+      - name: contract_effective_date 
+        type: date 
+        column: contract_effective_date     
+
+      - name: contract_end_date 
+        type: date 
+        column: contract_end_date
+
+      - name: contract_term 
+        type: string 
+        column: contract_term
+
+      - name: slascheme_id 
+        type: string 
+        column: slascheme_id
+
+      - name: customer_segment 
+        type: string 
+        column: customer_segment
+
+    measures:
+      - name: total_contracts
+        sql_snippet: ${contract.contract_id}
+        type: count
+        description: Total number of contracts
+
+    relationships:
+      - type: 1:N
+        field: complaint_id
+        target:
+          name: complaints
+          field: complaint_id
+
+      - type: 1:N
+        field: customer_id
+        target:
+          name: billing
+          field: customer_id
+
+      - type: 1:N
+        field: customer_id
+        target:
+          name: b2bdata
+          field: customer_id 
+
+  - name: complaints
+    sql:
+      query:
+      >
+        SELECT
+          issue_type,
+          device_type,
+          issue_time,
+          issue_details,
+          mobile_number,
+          email_id,
+          mode,
+          cdn,
+          device_details,
+          osdetails,
+          new_platform,
+          app_version,
+          country,
+          state,
+          network_strength,
+          content_id,
+          advertise_video,
+          user_identifier,
+          contract_id,
+          customer_id,
+          complaint_id
+        from 
+          icebase.telecom_ottchurn.ott_complaints
+      
+      columns:
+        - name: issue_type 
+        - name: device_type
+        - name: issue_time
+        - name: issue_details 
+        - name: mobile_number 
+        - name: email_id 
+        - name: mode 
+        - name: cdn 
+        - name: device_details 
+        - name: osdetails 
+        - name: new_platform
+        - name: app_version 
+        - name: country 
+        - name: state 
+        - name: network_strength 
+        - name: content_id 
+        - name: advertise_video 
+        - name: user_identifier
+        - name: contract_id 
+        - name: customer_id 
+        - name: complaint_id    
+      verified: true 
+      tables: 
+       - icebase.telecom_ottchurn.complaints
+       
+    fields: 
+
+      - name: issue_type
+        type: string
+        column: issue_type
+
+      - name: device_type
+        type: string
+        column: device_type
+
+      - name: issue_time
+        type: string
+        column: issue_time
+
+      - name: issue_details
+        type: string
+        column: issue_details
+      
+      - name: mobile_number
+        type: string
+        column: mobile_number
+
+      - name: email_id
+        type: string
+        column: email_id
+
+      - name: mode
+        type: string
+        column: mode
+
+      - name: cdn
+        type: string
+        column: cdn
+
+      - name: device_details
+        type: string
+        column: device_details
+
+      - name: osdetails 
+        type: string
+        column: osdetails
+
+      - name: new_platform
+        type: string
+        column: new_platform
+
+      - name: app_version
+        type: string
+        column: app_version
+
+      - name: country
+        type: string
+        column: country
+
+      - name: state
+        type: string
+        column: state
+
+      - name: network_strength
+        type: string
+        column: network_strength
+
+      - name: content_id
+        type: string
+        column: content_id
+
+      - name: customer_id
+        type: string
+        column: customer_id
+
+      - name: complaint_id    
+        type: string
+        primary: true         
+        column: complaint_id
+
+      
+    measures:
+      - name: total_complaints
+        sql_snippet: ${complaints.complaint_id}
+        type: count
+        description: Total number of complaints
+       
+      - name: total_devicetypes
+        sql_snippet: ${complaints.device_type}
+        type: count
+        description: Total types of Devices
+       
+      - name: total_mode
+        sql_snippet: ${complaints.mode}
+        type: count
+        description: Total types of mode
+
+    relationships:
+      - type: 1:N
+        field: customer_id
+        target:
+          name: billing
+          field: customer_id
+
+      - type: 1:N
+        field: customer_id
+        target:
+          name: b2bdata
+          field: customer_id
+
+  - name: billing
+    sql:
+      query:
+      >
+        SELECT 
+         customer_id,
+         billing_id,
+         subscription_type,
+         billing_type,
+         customer_longevity
+        from
+         icebase.telecom_ottchurn.ott_billing
+    
+      columns:
+        - name: customer_id 
+        - name: billing_id
+        - name: subscription_type
+        - name: billing_type
+        - name: customer_longevity
+
+    fields: 
+      - name: customer_id    
+        type: string 
+        column: customer_id
+
+      - name: billing_id
+        type: string
+        primary: true         
+        column: billing_id
+
+      - name: subscription_type
+        type: string
+        column: subscription_type
+      
+      - name: billing_type
+        type: string
+        column: billing_type
+
+      - name: customer_longevity
+        type: string
+        column: customer_longevity
+   
+    measures:
+      - name: total_billing
+        sql_snippet: ${billing.billing_id}
+        type: count
+        description: Total number of bills
+       
+      - name: total_billingtype
+        sql_snippet: ${billing.billing_type}
+        type: count
+        description: Total types of Billing
+
+      - name: total_subscription_type
+        sql_snippet: ${billing.subscription_type}
+        type: count
+        description: Total types of subscription
+
+    relationships:
+      - type: 1:N
+        field: customer_id
+        target:
+          name: b2bdata
+          field: customer_id
+
+  - name: b2bdata
+    sql:
+      query:
+        SELECT
+         partner_id,
+         customer_id,
+         asset_id,
+         device_id,
+         device_type,
+         platform,
+         content_type,
+         premium_content
+        from 
+         icebase.telecom_ottchurn.ott_b2bdata
+
+      columns:
+        - name: partner_id 
+        - name: customer_id
+        - name: asset_id
+        - name: device_id
+        - name: device_type
+        - name: platform
+        - name: content_type
+        - name: premium_content
+
+    fields: 
+      - name: partner_id    
+        type: string 
+        primary: true 
+        column: partner_id
+
+      - name: customer_id
+        type: string
+        column: customer_id 
+
+      - name: asset_id
+        type: string
+        column: asset_id
+
+      - name: device_id
+        type: string
+        column: device_id
+
+      - name: device_type
+        type: string
+        column: device_type
+
+      - name: platform
+        type: string
+        column: platform
+
+      - name: content_type
+        type: string
+        column: content_type
+
+      - name: premium_content
+        type: string
+        column: premium_content
+
+        
+    measures:
+      - name: total_partner_id
+        sql_snippet: ${b2bdata.partner_id}
+        type: count
+        description: Total number of Partners
+
+  
+
