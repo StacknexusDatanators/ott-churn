@@ -35,7 +35,7 @@ workflow:
             #validate single input
             inputs:
               - name: ott_userdata
-                dataset: dataos://icebase:telco_ott/ott_userdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdata
                 format: iceberg
  #Verify whether the value of the Profile Id is NOT NULL in the database  
       #value is showing 0 here

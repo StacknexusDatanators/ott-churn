@@ -1,0 +1,213 @@
+version: v1
+name: wf-user-quality
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and  checks on userdata
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-user-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on userdata
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - dataos.ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on userdata
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_userdataset
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdataset
+                format: iceberg
+            assertions: 
+
+      #Verify whether the value of the Profile Id is NOT NULL in the database  
+      #value is showing 0 here
+              - sql: |
+                    SELECT
+                    count(profile_id) as profile
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    profile_id IS NULL
+                tests: 
+                  - profile == 0 
+      #Verify whether the value of the DOB in the database is not greater than current data
+
+              - sql: |
+                   SELECT
+                    CASE
+                    WHEN dob IS NULL THEN 0              
+                    ELSE 1
+                    END dob
+                    FROM
+                    ott_userdataset
+                    GROUP BY
+                    1
+                    ORDER BY
+                    1
+                test: 
+                  - dob == 1
+      #Verify whether the value of Email is Unique in database.
+              - sql: |
+                    SELECT
+                      count(email) count_email
+                    FROM
+                      ott_userdataset
+                    GROUP BY
+                      email
+                test: 
+                  - count_email == 1
+      #Verify whether the value of the start date is not greater than validity date
+              - sql: |
+                    SELECT
+                    CASE
+                      WHEN start_date IS NULL THEN 0
+                      ELSE 1
+                    END start_date
+                    FROM
+                    ott_userdataset
+                     WHERE
+                    start_date < validity_end
+                    GROUP BY
+                    1
+                    ORDER BY
+                    1
+                tests: 
+                  - start_date == 1
+      #Verify whether the value of the status in the database is either Active or Inactive
+
+              - sql: |
+                    SELECT
+                    CASE
+                    WHEN status IN ('ACTIVE','INACTIVE') THEN 1
+                    ELSE 0
+                    END stat
+                    FROM
+                    ott_userdataset
+                    GROUP BY
+                    1
+                    ORDER BY
+                    1
+                tests: 
+                  - stat == 1
+#Verify whether the value of the Upgradable in the database is either Yes or NO
+
+              - sql: |
+                    SELECT
+                    CASE
+                    WHEN upgradable IN ('Yes','No') THEN 1
+                    ELSE 0
+                    END upgrad
+                    FROM
+                    ott_userdataset
+                    GROUP BY
+                    1
+                    ORDER BY
+                    1
+                tests: 
+                  - upgrad == 1
+#Verify whether the value of Mobile Number  is Unique in database
+              - sql:
+                    SELECT 
+                      count(mobile_number) count_mobile_number
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      mobile_number
+
+                test:
+                  -count_mobile_number == 1 
+
+#Verify whether the value of the Mobile Number is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(mobile_number) as mobilenumber
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    mobile_number IS NULL
+                tests: 
+                  - mobilenumber == 0 
+#Verify whether the value of Customer ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(customer_id) count_customer_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      customer_id
+
+                test:
+                  -count_customer_id == 1 
+
+#Verify whether the value of the Customer ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(customer_id) as customerid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    customer_id IS NULL
+                tests: 
+                  - customerid == 0 
+#Verify whether the value of PACK ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(pack_id) count_pack_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      pack_id
+
+                test:
+                  -count_pack_id == 1 
+
+#Verify whether the value of the PACK ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(pack_id) as packid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    pack_id IS NULL
+                tests: 
+                  - packid == 0 
+#Verify whether the value of CONTRACT ID is Unique in database
+              - sql:
+                    SELECT 
+                      count(contract_id) count_contract_id
+                    FROM
+                      ott_userdataset
+                    GROUP BY 
+                      contract_id
+
+                test:
+                  -count_contract_id == 1 
+
+#Verify whether the value of the CONTRACT ID is NOT NULL in the database
+
+              - sql: |
+                    SELECT
+                    count(contract_id) as contractid
+                    FROM
+                    ott_userdataset
+                    WHERE
+                    contract_id IS NULL
+                tests: 
+                  - contractid == 0 
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

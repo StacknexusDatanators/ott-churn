@@ -2,62 +2,38 @@ version: v1
 name: wf-b2bdata-quality
 type: workflow
 tags:
-  - b2b
-  - ott
-description: The job performs metrics calculations and checks on b2b data
+  - dataos.ott
+description: The job performs metrics calculations and checks on b2bdata data
 workflow:
   title: Metrics and checks
   dag:
     - name: ott-b2bdata-quality
       title: Metrics and checks
-      description: The job performs metrics calculations and checks on b2b data
+      description: The job performs metrics calculations and checks on b2bdata data
       spec:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - b2b
-          - ott
+          - dataos.ott
         title: Metrics and checks
-        description: The job performs metrics calculations and checks on b2b data
+        description: The job performs metrics calculations and checks on b2bdata data
         flare:
-          driver:
-            coreLimit: 3000m
-            cores: 2
-            memory: 4000m
-          executor:
-            coreLimit: 6000m
-            cores: 2
-            instances: 1
-            memory: 10000m
           job:
             explain: true
             logLevel: INFO
-            #validate single input
             inputs:
               - name: ott_b2bdata
-                dataset: dataos://icebase:telco_ott/ott_b2bdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata
                 format: iceberg
+            assertions: 
+
 #Verify whether the value of Customer ID is Unique in database
 
-            assertions:
-              - column: customer_id
-                tests:
-                  
-                  - count_customer_id == 1
-                  
-#Verify whether the value of Device ID is Unique in database
-
-              - column: device_id
-              
-                tests:
-                  - count_device_id == 1
-#Verify whether the value of the Premium Content in the data base is either Yes or NO 
-              
-              - column: premium_content
-                validFormat:
-                  regex: (?:'Yes'|'No') 
-                  
-
+                column: customerid
+                test: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
 
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer

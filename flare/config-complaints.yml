@@ -47,12 +47,12 @@ workflow:
                         case: lower
 
                       - name: any_timestamp
-                        column: issue_time
-                        asColumn: issue_time
+                        column: issuetime
+                        asColumn: issuetime
 
                       - name: set_type
                         columns:
-                          mobile_number: string
+                          mobilenumber: string
                                           
     - name: dataos-tool-ottcomplaints
       spec:

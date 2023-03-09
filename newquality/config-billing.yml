@@ -30,49 +30,47 @@ workflow:
 #Verify whether the value of Customer ID is Unique in database
               - sql: |
                     SELECT
-                      count(customerid) count_customerid
+                      count(customer_id) count_customer_id
                     FROM
                       ott_billing
                     GROUP BY
-                      customerid
+                      customer_id
                 test: 
                   - customer_id == 1
-
 #Verify whether the value of Billing ID is Unique in database
 
               - sql: |
                     SELECT
-                      count(billingid) count_billingid
+                      count(billing_id) count_billing_id
                     FROM
                       ott_billing
                     GROUP BY
-                      billingid
+                      billing_id
                 test: 
-                  - count_billingid == 1
+                  - count_billing_id == 1
                 
 #Verify whether the value of the Billing ID is NOT NULL in the database
 
               - sql: |
                     SELECT
-                    count(billingid) as billing
+                    count(billing_id) as billing
                     FROM
                     ott_billing
                     WHERE
-                    billingid IS NULL
+                    billing_id IS NULL
                 tests: 
                   - billing == 0 
 #Verify whether the value of the Customer ID is NOT NULL in the database
 
               - sql: |
                     SELECT
-                    count(customerid) as customer
+                    count(customer_id) as customer
                     FROM
                     ott_billing
                     WHERE
-                    customerid IS NULL
+                    customer_id IS NULL
                 tests: 
                   - customer == 0 
-
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer
             - spark.sql.shuffle.partitions: "10"

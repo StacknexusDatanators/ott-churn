@@ -35,7 +35,7 @@ workflow:
             #validate single input
             inputs:
               - name: ott_billing
-                dataset: dataos://icebase:telco_ott/ott_billing
+                dataset: dataos://icebase:telecom_ottchurn/ott_billing
                 format: iceberg
 #Verify whether the value of Customer ID is Unique in database
 

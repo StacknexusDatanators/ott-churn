@@ -1,5 +1,5 @@
 version: v1
-name: wf-ott-player
+name: wf-ott-players
 type: workflow
 workspace: public
 description:  The Job Ingests OTT player from bigquery

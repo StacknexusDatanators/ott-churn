@@ -1,5 +1,5 @@
 version: v1
-name: wf-ott-player
+name: wf-ott-players
 type: workflow
 tags:
   - dataos.ott
@@ -32,7 +32,7 @@ workflow:
             streaming:
               batchMode: true
               triggerMode: Once
-              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00002?acl=rw
+              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00004?acl=rw
             inputs:
               - name: player_input
                 dataset: dataos://ottbigquery:player/playertable

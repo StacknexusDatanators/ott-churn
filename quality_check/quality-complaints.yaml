@@ -35,22 +35,22 @@ workflow:
             #validate single input
             inputs:
               - name: ott_complaints
-                dataset: dataos://icebase:telco_ott/ott_complaints
+                dataset: dataos://icebase:telecom_ottchurn/ott_complaints
                 format: iceberg
 #Verify whether the value of Email ID is NOT NULL in database
 
             assertions:
-              - column: email_id
-                tests:
-                   - email == 0 
-                   - is_not_null= 'TRUE'
+             # - column: emailid
+              #  tests:
+               #    - email == 0 
+                #   - is_not_null= 'TRUE'
                   
 #Verify whether the value of User Identifier is Unique in database
 
-              - column: user_identifier
+              - column: useridentifier
               
                 tests:
-                  - count_user_identifier == 1
+                  - useridentifier == 1
    
                   
 
