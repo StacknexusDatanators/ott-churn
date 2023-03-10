@@ -27,7 +27,10 @@ entities:
           state,
           zipcode,
           contract_id,
-          preferred_language
+          preferred_language,
+          subscription_type	,
+          socialmediaengagement,
+          userratings
         from 
            icebase.telecom_ottchurn.ott_userdataset
 
@@ -50,11 +53,26 @@ entities:
         - name: zipcode  
         - name: contract_id 
         - name: preferred_language 
+        - name: userratings
+        - name: socialmediaengagement
+        - name: subscription_type
       verified: true 
       tables: 
         - icebase.telecom_ottchurn.userdataset
 
     fields: 
+      - name: subscription_type
+        type: string
+        column: subscription_type
+
+      - name: socialmediaengagement
+        type: string
+        column: socialmediaengagement
+
+      - name: userratings
+        type: string
+        column: userratings
+
       - name: email 
         type: string 
         column: email
@@ -137,9 +155,14 @@ entities:
         description: Total number of customers
  
       - name: total_language
-        sql_snippet: ${userdataset.preferred_language}}
+        sql_snippet: ${userdataset.preferred_language}
         type: count
         description: Total types of language preferred
+
+      - name: average_userrating
+        sql_snippet: ${userdataset.userratings}
+        type: avg
+        description: Average User Rating   
 
     relationships:
       - type: 1:N
@@ -163,13 +186,13 @@ entities:
         field: customer_id
         target:
           name: billing
-          field: customer_id
+          field: customerid
 
       - type : 1:N
         field: customer_id
         target: 
           name: b2bdata
-          field: customer_id
+          field: customerid
 
   - name: player
     sql:
@@ -390,6 +413,10 @@ entities:
         type: count
         description: Total types of hardware
 
+      - name: total_duration
+        sql_snippet: ${player.duration} 
+        type: sum
+        description: Total duration of video
 
   - name: contract
     sql: 
@@ -482,100 +509,102 @@ entities:
         field: complaint_id
         target:
           name: complaints
-          field: complaint_id
+          field: complaintid
 
       - type: 1:N
         field: customer_id
         target:
           name: billing
-          field: customer_id
+          field: customerid
 
       - type: 1:N
         field: customer_id
         target:
           name: b2bdata
-          field: customer_id 
+          field: customerid 
 
   - name: complaints
     sql:
       query:
       >
         SELECT
-          issue_type,
-          device_type,
-          issue_time,
-          issue_details,
-          mobile_number,
-          email_id,
+          issuetype,
+          devicetype,
+          issuetime,
+          issuedetails,
+          mobilenumber,
+          emailid,
           mode,
           cdn,
-          device_details,
+          devicedetails,
           osdetails,
-          new_platform,
-          app_version,
+          platform,
+          appversion,
           country,
           state,
-          network_strength,
-          content_id,
+          networkstrength,
+          contentid,
           advertise_video,
-          user_identifier,
-          contract_id,
+          useridentifier,
+          contractid,
           customer_id,
-          complaint_id
+          complaintid,
+          customer_support_interactions
         from 
           icebase.telecom_ottchurn.ott_complaints
       
       columns:
-        - name: issue_type 
-        - name: device_type
-        - name: issue_time
-        - name: issue_details 
-        - name: mobile_number 
-        - name: email_id 
+        - name: issuetype 
+        - name: devicetype
+        - name: issuetime
+        - name: issuedetails 
+        - name: mobilenumber 
+        - name: emailid 
         - name: mode 
         - name: cdn 
-        - name: device_details 
+        - name: devicedetails 
         - name: osdetails 
-        - name: new_platform
-        - name: app_version 
+        - name: platform
+        - name: appversion 
         - name: country 
         - name: state 
-        - name: network_strength 
-        - name: content_id 
-        - name: advertise_video 
-        - name: user_identifier
-        - name: contract_id 
+        - name: networkstrength 
+        - name: contentid 
+        - name: advertisevideo 
+        - name: useridentifier
+        - name: contractid 
         - name: customer_id 
-        - name: complaint_id    
+        - name: complaintid    
+        - name: customer_support_interactions
       verified: true 
       tables: 
        - icebase.telecom_ottchurn.complaints
        
     fields: 
 
-      - name: issue_type
+      - name: issuetype
         type: string
-        column: issue_type
+        column: issuetype
 
-      - name: device_type
+      - name: devicetype
         type: string
-        column: device_type
+        column: devicetype
 
-      - name: issue_time
+      - name: issuetime
         type: string
-        column: issue_time
+        column: issuetime
 
-      - name: issue_details
+      - name: issuedetails
         type: string
-        column: issue_details
+        column: issuedetails
       
-      - name: mobile_number
+      - name: mobilenumber
         type: string
-        column: mobile_number
+        column: mobilenumber
 
-      - name: email_id
+      - name: emailid
         type: string
-        column: email_id
+        column: emailid
 
       - name: mode
         type: string
@@ -585,21 +614,21 @@ entities:
         type: string
         column: cdn
 
-      - name: device_details
+      - name: devicedetails
         type: string
-        column: device_details
+        column: devicedetails
 
       - name: osdetails 
         type: string
         column: osdetails
 
-      - name: new_platform
+      - name: platform
         type: string
-        column: new_platform
+        column: platform
 
-      - name: app_version
+      - name: appversion
         type: string
-        column: app_version
+        column: appversion
 
       - name: country
         type: string
@@ -609,32 +638,35 @@ entities:
         type: string
         column: state
 
-      - name: network_strength
+      - name: networkstrength
         type: string
-        column: network_strength
+        column: networkstrength
 
-      - name: content_id
+      - name: contentid
         type: string
-        column: content_id
+        column: contentid
 
       - name: customer_id
         type: string
         column: customer_id
 
-      - name: complaint_id    
+      - name: complaintid    
         type: string
         primary: true         
-        column: complaint_id
+        column: complaintid
 
+      - name: customer_support_interactions
+        type: string
+        column: customer_support_interactions
       
     measures:
       - name: total_complaints
-        sql_snippet: ${complaints.complaint_id}
+        sql_snippet: ${complaints.complaintid}
         type: count
         description: Total number of complaints
        
       - name: total_devicetypes
-        sql_snippet: ${complaints.device_type}
+        sql_snippet: ${complaints.devicetype}
         type: count
         description: Total types of Devices
        
@@ -643,147 +675,163 @@ entities:
         type: count
         description: Total types of mode
 
+      - name: average_customer_support_interactions
+        sql_snippet: ${complaints.customer_support_interactions}
+        type: avg
+        description: Average count of Customer Support Interactions
+
     relationships:
       - type: 1:N
         field: customer_id
         target:
           name: billing
-          field: customer_id
+          field: customerid
 
       - type: 1:N
         field: customer_id
         target:
           name: b2bdata
-          field: customer_id
+          field: customerid
 
   - name: billing
     sql:
       query:
       >
         SELECT 
-         customer_id,
-         billing_id,
-         subscription_type,
-         billing_type,
-         customer_longevity
+         customerid,
+         billingid,
+         subscriptiontype,
+         billingtype,
+         customerlongevity,
+         payment_history
         from
          icebase.telecom_ottchurn.ott_billing
     
       columns:
-        - name: customer_id 
-        - name: billing_id
-        - name: subscription_type
-        - name: billing_type
-        - name: customer_longevity
+        - name: customerid 
+        - name: billingid
+        - name: subscriptiontype
+        - name: billingtype
+        - name: customerlongevity
+        - name: payment_history
 
     fields: 
-      - name: customer_id    
+      - name: customerid    
         type: string 
-        column: customer_id
+        column: customerid
 
-      - name: billing_id
+      - name: billingid
         type: string
         primary: true         
-        column: billing_id
+        column: billingid
 
-      - name: subscription_type
+      - name: subscriptiontype
         type: string
-        column: subscription_type
+        column: subscriptiontype
       
-      - name: billing_type
+      - name: billingtype
         type: string
-        column: billing_type
+        column: billingtype
 
-      - name: customer_longevity
+      - name: customerlongevity
         type: string
-        column: customer_longevity
-   
+        column: customerlongevity
+
+      - name: payment_history
+        type: string
+        column: payment_history
+
     measures:
       - name: total_billing
-        sql_snippet: ${billing.billing_id}
+        sql_snippet: ${billing.billingid}
         type: count
         description: Total number of bills
        
       - name: total_billingtype
-        sql_snippet: ${billing.billing_type}
+        sql_snippet: ${billing.billingtype}
         type: count
         description: Total types of Billing
 
       - name: total_subscription_type
-        sql_snippet: ${billing.subscription_type}
+        sql_snippet: ${billing.subscriptiontype}
         type: count
         description: Total types of subscription
 
     relationships:
       - type: 1:N
-        field: customer_id
+        field: customerid
         target:
           name: b2bdata
-          field: customer_id
+          field: customerid
 
   - name: b2bdata
     sql:
       query:
         SELECT
-         partner_id,
-         customer_id,
-         asset_id,
-         device_id,
-         device_type,
+         partnerid,
+         customerid,
+         assetid,
+         deviceid,
+         devicetype,
          platform,
-         content_type,
-         premium_content
+         contenttype,
+         premiumcontent,
+         marketing_campaigns_received
         from 
          icebase.telecom_ottchurn.ott_b2bdata
 
       columns:
-        - name: partner_id 
-        - name: customer_id
-        - name: asset_id
-        - name: device_id
-        - name: device_type
+        - name: partnerid 
+        - name: customerid
+        - name: assetid
+        - name: deviceid
+        - name: devicetype
         - name: platform
-        - name: content_type
-        - name: premium_content
+        - name: contenttype
+        - name: premiumcontent
+        - name: marketing_campaigns_received
 
     fields: 
-      - name: partner_id    
+      - name: partnerid    
         type: string 
         primary: true 
-        column: partner_id
+        column: partnerid
 
-      - name: customer_id
+      - name: customerid
         type: string
-        column: customer_id 
+        column: customerid 
 
-      - name: asset_id
+      - name: assetid
         type: string
-        column: asset_id
+        column: assetid
 
-      - name: device_id
+      - name: deviceid
         type: string
-        column: device_id
+        column: deviceid
 
-      - name: device_type
+      - name: devicetype
         type: string
-        column: device_type
+        column: devicetype
 
       - name: platform
         type: string
         column: platform
 
-      - name: content_type
+      - name: contenttype
         type: string
-        column: content_type
+        column: contenttype
 
-      - name: premium_content
+      - name: premiumcontent
         type: string
-        column: premium_content
+        column: premiumcontent
 
-        
+      - name: marketing_campaigns_received
+        type: string
+        column: marketing_campaigns_received
+
     measures:
       - name: total_partner_id
-        sql_snippet: ${b2bdata.partner_id}
+        sql_snippet: ${b2bdata.partnerid}
         type: count
         description: Total number of Partners
 
