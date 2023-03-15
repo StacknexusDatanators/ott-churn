@@ -1,0 +1,60 @@
+version: v1
+name: wf-quality-player
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and checks on player data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-player-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on player data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - player
+          - ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on player data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: source
+                dataset:  dataos://icebase:resources_management/ott_player
+                format: iceberg
+            assertions: 
+            
+              - column: user_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: partner_id
+                tests: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: device_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: subscribed
+                validformat: 
+                  regex: (?:'Yes'|'No') 
+              - column: start_position
+                tests: 
+                  - start_position < end_position
+              - column: end_position
+                tests: 
+                  - end_position > start_position
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

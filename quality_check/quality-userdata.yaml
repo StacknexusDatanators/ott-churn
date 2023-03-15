@@ -1,38 +1,27 @@
 version: v1
-name: wf-userdata-quality
+name: wf-quality-userdata
 type: workflow
 tags:
-  - user
-  - ott
-description: The job performs metrics calculations and checks on user data
+  - dataos.ott
+description: The job performs metrics calculations and checks on userdata data
 workflow:
   title: Metrics and checks
   dag:
     - name: ott-userdata-quality
       title: Metrics and checks
-      description: The job performs metrics calculations and checks on user data
+      description: The job performs metrics calculations and checks on userdata data
       spec:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - user
+          - userdata
           - ott
         title: Metrics and checks
-        description: The job performs metrics calculations and checks on user data
+        description: The job performs metrics calculations and checks on userdata data
         flare:
-          driver:
-            coreLimit: 3000m
-            cores: 2
-            memory: 4000m
-          executor:
-            coreLimit: 6000m
-            cores: 2
-            instances: 1
-            memory: 10000m
           job:
             explain: true
             logLevel: INFO
-            #validate single input
             inputs:
               - name: ott_userdata
                 dataset: dataos://icebase:telecom_ottchurn/ott_userdata
@@ -41,38 +30,48 @@ workflow:
       #value is showing 0 here
 
             assertions:
-              - column: profile_id
+              - column: mobilenumber
                 tests:
-                  - is_not_null= 'TRUE'
-                  
-  #Verify whether the value of the DOB in the database is not greater than current data
-              - column: dob
-
-                tests:
-                  - is_date_valid(dob)
-                  - dob > datetime.datetime.now()
-  #Verify whether the value of Email is Unique in database.
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
               - column: email
                 tests:
-                  - count_email == 1
-   #Verify whether the value of the start date is not greater than validity date
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: profile_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: contract_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: customer_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: pack_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
               - column: start_date
               - column: validity_date
-
                 tests:
                   - is_date_valid(start_date)
                   - is_date_valid(validity_end)
                   - start_date < validity_end
-                  
-  #Verify whether the value of the status in the database is either Active or Inactive
               - column: status
                 validFormat:
                   regex: (?:'ACTIVE'|'INACTIVE') 
-
-  #Verify whether the value of the Upgradable in the database is either Yes or NO
               - column: upgradable
                 validFormat:
-                  regex: (?:'Yes'|'No') 
+                  regex: (?:'Yes'|'No')                  
 
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer

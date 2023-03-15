@@ -1,9 +1,8 @@
 version: v1
-name: wf-billing-quality
+name: wf-quality-billing
 type: workflow
 tags:
-  - billing
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on billing data
 workflow:
   title: Metrics and checks
@@ -20,43 +19,30 @@ workflow:
         title: Metrics and checks
         description: The job performs metrics calculations and checks on billing data
         flare:
-          driver:
-            coreLimit: 3000m
-            cores: 2
-            memory: 4000m
-          executor:
-            coreLimit: 6000m
-            cores: 2
-            instances: 1
-            memory: 10000m
           job:
             explain: true
             logLevel: INFO
-            #validate single input
             inputs:
               - name: ott_billing
                 dataset: dataos://icebase:telecom_ottchurn/ott_billing
                 format: iceberg
-#Verify whether the value of Customer ID is Unique in database
 
             assertions:
-              - column: customer_id
+ #Verify whether the value of Customer ID is Unique in database
+
+              - column: customerid
                 tests:
-                  
-                  - count_customer_id == 1
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
                   
 #Verify whether the value of Billing ID is Unique in database
 
-              - column: billing_id
-              
+              - column: billingid
                 tests:
-                  - count_billing_id == 1
-#Verify whether the value of the Customer ID is NOT NULL in the database
-              
-              - column: customer_id
-                tests:
-                  - customer_id == 1
-                  - is_not_null= 'TRUE'
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
                   
 
 

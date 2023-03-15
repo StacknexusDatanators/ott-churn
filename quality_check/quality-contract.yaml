@@ -1,0 +1,66 @@
+version: v1
+name: wf-quality-contract
+type: workflow
+tags:
+  - dataos.ott
+description: The job performs metrics calculations and checks on contract data
+workflow:
+  title: Metrics and checks
+  dag:
+    - name: ott-contract-quality
+      title: Metrics and checks
+      description: The job performs metrics calculations and checks on contract data
+      spec:
+        stack: flare:3.0
+        compute: runnable-default
+        tags:
+          - contract
+          - ott
+        title: Metrics and checks
+        description: The job performs metrics calculations and checks on contract data
+        flare:
+          job:
+            explain: true
+            logLevel: INFO
+            inputs:
+              - name: ott_contract
+                dataset: dataos://icebase:telecom_ottchurn/ott_contract
+                format: iceberg
+
+            assertions:
+              - column: contract_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: customer_id
+                tests: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: complaint_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+
+              - column: slascheme_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: contract_effective_date
+                tests: 
+                  - contract_effective_date < contract_end_date
+                  - missing_count <= 0
+              - column: contract_end_date
+                tests:
+                  - contract_end_date > contract_effective_date
+                  - missing_count <= 0
+
+          sparkConf:
+            - spark.serializer: org.apache.spark.serializer.KryoSerializer
+            - spark.sql.shuffle.partitions: "10"
+            - spark.memory.storageFraction: "0.1"
+            - spark.memory.fraction: "0.1"
+            - spark.shuffle.memoryFraction: "0.2"

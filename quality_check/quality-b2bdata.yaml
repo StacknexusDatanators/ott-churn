@@ -1,5 +1,5 @@
 version: v1
-name: wf-b2bdata-quality
+name: wf-quality-b2bdata
 type: workflow
 tags:
   - dataos.ott
@@ -14,7 +14,8 @@ workflow:
         stack: flare:3.0
         compute: runnable-default
         tags:
-          - dataos.ott
+          - b2bdata
+          - ott
         title: Metrics and checks
         description: The job performs metrics calculations and checks on b2bdata data
         flare:
@@ -22,18 +23,39 @@ workflow:
             explain: true
             logLevel: INFO
             inputs:
-              - name: ott_b2bdata
-                dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata
+              - name: source
+                dataset:  dataos://icebase:resources_management/ott_b2bdata
                 format: iceberg
-            assertions: 
 
-#Verify whether the value of Customer ID is Unique in database
+            assertions:
 
-                column: customerid
-                test: 
+              - column: customer_id
+                tests:
                   - duplicate_count == 0
                   - missing_percentage == 0
                   - missing_count <= 0
+
+              - column: device_id
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+
+              - column: assetid
+                tests:
+                  - duplicate_count == 0
+                  - missing_count == 0
+                  - missing_count <= 0
+                  
+              - column: partnerid
+                tests: 
+                  - duplicate_count == 0
+                  - missing_count == 0
+                  - missing_count <= 0
+
+              - column: premium_content
+                validFormat:
+                  regex: (?:'Yes'|'No')
 
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer

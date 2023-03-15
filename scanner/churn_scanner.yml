@@ -16,4 +16,4 @@ workflow:
         compute: runnable-default
         scanner:
           depot: dataos://ottchurndbdatabase
-          source: postgreSources
+         # source: postgreSources

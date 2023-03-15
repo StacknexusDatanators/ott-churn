@@ -1,9 +1,8 @@
 version: v1
-name: wf-complaints-quality
+name: wf-quality-complaints
 type: workflow
 tags:
-  - complaints
-  - ott
+  - dataos.ott
 description: The job performs metrics calculations and checks on complaints data
 workflow:
   title: Metrics and checks
@@ -20,39 +19,54 @@ workflow:
         title: Metrics and checks
         description: The job performs metrics calculations and checks on complaints data
         flare:
-          driver:
-            coreLimit: 3000m
-            cores: 2
-            memory: 4000m
-          executor:
-            coreLimit: 6000m
-            cores: 2
-            instances: 1
-            memory: 10000m
           job:
             explain: true
             logLevel: INFO
-            #validate single input
             inputs:
               - name: ott_complaints
                 dataset: dataos://icebase:telecom_ottchurn/ott_complaints
                 format: iceberg
-#Verify whether the value of Email ID is NOT NULL in database
 
             assertions:
-             # - column: emailid
-              #  tests:
-               #    - email == 0 
-                #   - is_not_null= 'TRUE'
-                  
-#Verify whether the value of User Identifier is Unique in database
+              - column: contractid
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: customer_id
+                tests: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+              - column: mobilenumber
+                tests: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+   
+              - column: emailid
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+
+              - column: contentid
+                tests:
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
 
               - column: useridentifier
-              
                 tests:
-                  - useridentifier == 1
-   
-                  
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
+
+              - column: complaintid
+                tests: 
+                  - duplicate_count == 0
+                  - missing_percentage == 0
+                  - missing_count <= 0
 
 
           sparkConf:
