@@ -15,4 +15,8 @@ service:
   envs:
     LOG_LEVEL: info
   alpha:
+    command: 
+      - /bin/bash
+    arguments:
+      - /usr/src/app/store-migration.sh
     image: joby05/ott_player_gen:v1.4
