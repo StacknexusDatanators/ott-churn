@@ -21,8 +21,4 @@ service:
   envs:
     LOG_LEVEL: info
   alpha:
-    command: 
-      - /bin/bash
-    arguments:
-      - /usr/src/app/store-migration.sh
     image: joby05/ott_pred:v1.3
