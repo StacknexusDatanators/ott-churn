@@ -24,18 +24,18 @@ workflow:
             logLevel: INFO
             inputs:
               - name: source
-                dataset:  dataos://icebase:resources_management/ott_b2bdata
+                dataset:  dataos://icebase:telecom_ottchurn/ott_b2bdata
                 format: iceberg
 
             assertions:
 
-              - column: customer_id
+              - column: customerid
                 tests:
                   - duplicate_count == 0
                   - missing_percentage == 0
                   - missing_count <= 0
 
-              - column: device_id
+              - column: deviceid
                 tests:
                   - duplicate_count == 0
                   - missing_percentage == 0

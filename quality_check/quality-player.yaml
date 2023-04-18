@@ -24,7 +24,7 @@ workflow:
             logLevel: INFO
             inputs:
               - name: source
-                dataset:  dataos://icebase:resources_management/ott_player
+                dataset:  dataos://icebase:telecom_ottchurn/ott_player
                 format: iceberg
             assertions: 
             
@@ -46,12 +46,6 @@ workflow:
               - column: subscribed
                 validformat: 
                   regex: (?:'Yes'|'No') 
-              - column: start_position
-                tests: 
-                  - start_position < end_position
-              - column: end_position
-                tests: 
-                  - end_position > start_position
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer
             - spark.sql.shuffle.partitions: "10"

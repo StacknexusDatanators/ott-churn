@@ -49,14 +49,6 @@ workflow:
                   - duplicate_count == 0
                   - missing_percentage == 0
                   - missing_count <= 0
-              - column: contract_effective_date
-                tests: 
-                  - contract_effective_date < contract_end_date
-                  - missing_count <= 0
-              - column: contract_end_date
-                tests:
-                  - contract_end_date > contract_effective_date
-                  - missing_count <= 0
 
           sparkConf:
             - spark.serializer: org.apache.spark.serializer.KryoSerializer

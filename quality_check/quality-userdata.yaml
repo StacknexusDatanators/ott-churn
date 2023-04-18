@@ -60,8 +60,8 @@ workflow:
                   - duplicate_count == 0
                   - missing_percentage == 0
                   - missing_count <= 0
-              - column: start_date
-              - column: validity_date
+
+              - column: validity_end
                 tests:
                   - is_date_valid(start_date)
                   - is_date_valid(validity_end)
