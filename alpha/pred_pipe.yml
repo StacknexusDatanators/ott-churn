@@ -2,23 +2,23 @@ version: v1
 name: ott-pred-pipeline
 type: service
 service:
-  autoScaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 4
-    targetMemoryUtilizationPercentage: 90
-    targetCPUUtilizationPercentage: 90
+  #autoScaling:
+   # enabled: true
+    #minReplicas: 2
+    #maxReplicas: 4
+    #targetMemoryUtilizationPercentage: 90
+    #targetCPUUtilizationPercentage: 90
   title: Logistic Regression prediction for OTT churn
   replicas: 1
   servicePort: 8094
   ingress:
     enabled: true
     noAuthentication: true
-    path: /ott-pred
+    path: /ott_pred
     stripPath: true
   stack: alpha
   compute: runnable-default
   envs:
     LOG_LEVEL: info
   alpha:
-    image: joby05/ott_pred:v1.3
+    image: johnkezia/ott_pred:v5.0
