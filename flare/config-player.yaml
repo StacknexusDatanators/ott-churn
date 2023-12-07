@@ -1,65 +1,55 @@
 version: v1
 name: wf-ott-players
 type: workflow
-workspace: public
-description:  The Job Ingests OTT player from bigquery
 tags:
-  - dataos.ott
+    - ott.player
+
+description: The Job Ingests OTT player data from Blob Storage to icebase
 workflow:
-  title: OTT player load
-  #schedule:                         
-   # cron: "0 */1 * * *"
-    #concurrencyPolicy: Forbid 
+  title: OTT Player Load
   dag:
     - name: ott-player
       title: OTT player Dataset
-      description: This job ingest data of OTT player from BQ to icebase
+      description:  The Job Ingests OTT player data from Blob Storage to icebase
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.player
+        stack: flare:4.0
         compute: runnable-default
-      flare:
+        flare:
+          driver:
+            coreLimit: 6000m
+            cores: 2
+            memory: 8000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 2
+            memory: 8000m   
           job:
             explain: true
-            streaming:
-              batchMode: true
-              triggerMode: Once
-              checkpointLocation: dataos://icebase:sys01/checkpoint/ott-churn-player/test/player-injest-00002?acl=rw
             inputs:
               - name: player_input
-                dataset: dataos://ottbigquery:player/playertable
+                dataset: dataos://thirdparty01:none/analytics/ott/Player.csv
                 format: csv
+                options:
+                 header: True
+                 inferschema: True
+
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: player
+                dataset: dataos://icebase:telecom_ottchurn/ott_player?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
             steps:
-              - sink:
-                  - sequenceName: player
-                    datasetName: ott_player
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT player and their corresponding attributes.
-                    title: OTT player Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: append
-
-                      iceberg:
-                        partitionSpec:
-                          - type: identity
-                            column: event_type
-                          - type: month
-                            column: session_start
-                            name: month_partitioned
-                sequence:
+              - sequence:
                   - name: player
-                    sql: >
+                    sql:  >
                       select * from player_input
                     functions:
-                      - name: snake_case
+                      - name: cleanse_column_names
                       - name: change_column_case
                         case: lower
 

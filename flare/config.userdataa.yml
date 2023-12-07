@@ -1,61 +1,70 @@
 version: v1
 name: wf-ott-userdata
 type: workflow
-workspace: public
-description:  The Job Ingests OTT userdata from bigquery
 tags:
-  - dataos.ott
+    - ott.userdata
+
+description: The Job Ingests OTT users data from Blob storage to icebase
 workflow:
-  title: OTT userdata load
+  title: OTT Userdata Load
   dag:
     - name: ott-userdata
-      title: OTT userdata Dataset
-      description: This job ingest data of OTT userdata from BQ to icebase
+      title: OTT Userdata Dataset
+      description:  The Job Ingests OTT users data from Blob storage to icebase
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.userdata
+        stack: flare:4.0
         compute: runnable-default
         flare:
+          driver:
+            coreLimit: 6000m
+            cores: 2
+            memory: 8000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 2
+            memory: 8000m   
           job:
+            explain: true
             inputs:
               - name: userdata_input
-                dataset: dataos://ottbigquery:userdata/usertable
+                dataset: dataos://thirdparty01:none/analytics/ott/Users.csv
+                format: csv
+                options:
+                 header: True
+                 inferschema: True
+
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: userdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_userdataset?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
             steps:
-              - sink:
-                  - sequenceName: userdata
-                    datasetName: ott_userdataset
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT userdata and their corresponding attributes
-                    title: OTT userdata Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: overwrite
-                sequence:
+              - sequence:
                   - name: userdata
-                    sql: 
+                    sql:  >
                       select * from userdata_input
                     functions:
-                       - name: snake_case
-                       - name: change_column_case
-                         case: lower
-                       - name: any_timestamp
-                         column: dob
-                         asColumn: dob
+                      - name: cleanse_column_names
+                      - name: change_column_case
+                        case: lower
 
-                       - name: any_timestamp
-                         column: start_date
-                         asColumn: start_date
-                         
-                       - name: any_timestamp
-                         column: validity_end
-                         asColumn: validity_end
+                      - name: any_timestamp
+                        column: dob
+                        asColumn: dob
+
+                      - name: any_timestamp
+                        column: start_date
+                        asColumn: start_date
+                        
+                      - name: any_timestamp
+                        column: validity_end
+                        asColumn: validity_end
+
     - name: dataos-tool-ottuserdata
       spec:
         stack: toolbox

@@ -1,59 +1,58 @@
 version: v1
 name: wf-ott-complaints
 type: workflow
-workspace: public
-description:  The Job Ingests OTT complaints from GBQ
 tags:
-  - dataos.ott
+    - ott.complaints
+
+description: This job extracting OTT complaints stored in Blob storage and seamlessly transferring them into Icebase
 workflow:
-  title: OTT complaints load
+  title: OTT complaints Load
   dag:
     - name: ott-complaints
       title: OTT complaints Dataset
-      description: This job ingest data of OTT complaints from GBQ to icebase
+      description:  This job extracting OTT complaints stored in Blob storage and seamlessly transferring them into Icebase
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.complaints
+        stack: flare:4.0
         compute: runnable-default
         flare:
+          driver:
+            coreLimit: 6000m
+            cores: 2
+            memory: 8000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 2
+            memory: 8000m   
           job:
+            explain: true
             inputs:
               - name: complaints_input
-                dataset: dataos://ottbigquery:complaints/complaintable
+                dataset: dataos://thirdparty01:none/analytics/ott/Complaints.csv
+                format: csv
+                options:
+                 header: True
+                 inferschema: True
+
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: complaints
+                dataset: dataos://icebase:telecom_ottchurn/ott_complaints?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
             steps:
-              - sink:
-                  - sequenceName: complaints
-                    datasetName: ott_complaints
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT complaints and their corresponding attributes
-                    title: OTT complaints Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: overwrite
-                sequence:
+              - sequence:
                   - name: complaints
-                    sql: >
+                    sql:  >
                       select * from complaints_input
                     functions:
-                      - name: snake_case
+                      - name: cleanse_column_names
                       - name: change_column_case
                         case: lower
 
-                      - name: any_timestamp
-                        column: issuetime
-                        asColumn: issuetime
-
-                      - name: set_type
-                        columns:
-                          mobilenumber: string
-                                          
     - name: dataos-tool-ottcomplaints
       spec:
         stack: toolbox

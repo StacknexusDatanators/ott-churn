@@ -1,50 +1,58 @@
 version: v1
 name: wf-ott-billing
 type: workflow
-workspace: public
-description:  The Job Ingests OTT billing from GBQ
 tags:
-  - dataos.ott
+    - ott.billing
+
+description: The Job Ingests OTT Billing Data from Blob storage to Icebase
 workflow:
   title: OTT billing load
   dag:
     - name: ott-billing
       title: OTT billing Dataset
-      description: This job ingest data of OTT billing from GBQ to icebase
+      description:  The Job Ingests OTT Billing data from Blob storage to Icebase
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.billing
+        stack: flare:4.0
         compute: runnable-default
         flare:
+          driver:
+            coreLimit: 6000m
+            cores: 2
+            memory: 8000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 2
+            memory: 8000m   
           job:
+            explain: true
             inputs:
               - name: billing_input
-                dataset: dataos://ottbigquery:billing/billingtable
+                dataset: dataos://thirdparty01:none/analytics/ott/Billing.csv
+                format: csv
+                options:
+                 header: True
+                 inferschema: True
+
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: billing
+                dataset: dataos://icebase:telecom_ottchurn/ott_billing?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
             steps:
-              - sink:
-                  - sequenceName: billing
-                    datasetName: ott_billing
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT billing and their corresponding attributes
-                    title: OTT billing Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: overwrite
-                sequence:
+              - sequence:
                   - name: billing
-                    sql: >
+                    sql:  >
                       select * from billing_input
                     functions:
-                      - name: snake_case
+                      - name: cleanse_column_names
                       - name: change_column_case
                         case: lower
+
     - name: dataos-tool-ottbilling
       spec:
         stack: toolbox
@@ -56,4 +64,3 @@ workflow:
             value: latest
       dependencies:
         - ott-billing
- 

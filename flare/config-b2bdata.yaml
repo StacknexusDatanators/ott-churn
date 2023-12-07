@@ -1,48 +1,55 @@
 version: v1
-name: wf-ott-b2bdata
+name: wf-ott-b2bdatas
 type: workflow
-workspace: public
-description:  The Job Ingests OTT b2bdata from bigquery
 tags:
-  - dataos.ott
+    - ott.b2bdata
+
+description: The Job Ingests OTT B2B data from Blob storage to Icebase
 workflow:
   title: OTT b2bdata load
   dag:
     - name: ott-b2bdata
       title: OTT b2bdata Dataset
-      description: This job ingest data of OTT b2bdata from BQ to icebase
+      description:  The Job Ingests OTT B2B data from Blob storage to Icebase
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.b2bdata
+        stack: flare:4.0
         compute: runnable-default
         flare:
+          driver:
+            coreLimit: 6000m
+            cores: 2
+            memory: 8000m
+          executor:
+            coreLimit: 6000m
+            cores: 2
+            instances: 2
+            memory: 8000m   
           job:
+            explain: true
             inputs:
               - name: b2bdata_input
-                dataset: dataos://ottbigquery:b2bdata/b2btable
+                dataset: dataos://thirdparty01:none/analytics/ott/B2B_Data.csv
+                format: csv
+                options:
+                 header: True
+                 inferschema: True
+
             logLevel: INFO
             outputs:
-              - name: output01
-                depot: dataos://icebase:telecom_ottchurn?acl=rw
+              - name: b2bdata
+                dataset: dataos://icebase:telecom_ottchurn/ott_b2bdata?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
             steps:
-              - sink:
-                  - sequenceName: b2bdata
-                    datasetName: ott_b2bdata
-                    outputName: output01
-                    outputType: Iceberg
-                    description: This dataset gives details of all OTT b2bdata and their corresponding attributes
-                    title: OTT b2bdata Data
-                    tags:
-                      - dataos.ott
-                    outputOptions:
-                      saveMode: overwrite
-                sequence:
+              - sequence:
                   - name: b2bdata
-                    sql: >
+                    sql:  >
                       select * from b2bdata_input
                     functions:
-                      - name: snake_case
+                      - name: cleanse_column_names
                       - name: change_column_case
                         case: lower
 
