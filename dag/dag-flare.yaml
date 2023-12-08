@@ -1,11 +1,36 @@
 version: v1
-name: fuel-raw-data-pipline
+name: wf-ingest-telecom-ottchurn-pipeline
 type: workflow
 tags:
-  - Flare
+- Flare
 description: Ingest data into Icebase
 workflow:
-  title: Fuel Ingest Pipeline
+  title: Ottchurn Data Ingest Pipeline
   dag:
-  - name: raw-aoc
-    file: flare/raw-data/config-air-control-center.yaml
+    - name: ott_b2bdata
+      file: ott_churn_branch_2/ott-churn/flare/config-b2bdata.yaml
+
+    - name: ott_billing
+      file: ott_churn_branch_2/ott-churn/flare/config-billing.yml
+      dependencies:
+        - ott_b2bdata
+
+    - name: ott_complaints
+      file: ott_churn_branch_2/ott-churn/flare/config-complaints.yml
+      dependencies:
+        - ott_billing
+
+    - name: ott_contract
+      file: ott_churn_branch_2/ott-churn/flare/config-contracts.yaml
+      dependencies:
+        - ott_complaints
+
+    - name: ott_player
+      file: ott_churn_branch_2/ott-churn/flare/config-player.yaml
+      dependencies:
+        - ott_contract
+
+    - name: ott_userdataset
+      file: ott_churn_branch_2/ott-churn/flare/config.userdataa.yml
+      dependencies:
+        - ott_player

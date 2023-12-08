@@ -2,7 +2,7 @@ version: v1
 name: wf-ott-contract
 type: workflow
 tags:
-  - dataos.ott
+  - ott.contract
 description: The job performs metrics calculations and checks on contract data
 workflow:
   title: Metrics and checks
@@ -11,10 +11,10 @@ workflow:
       title: Metrics and checks
       description: The job performs metrics calculations and checks on contract data
       spec:
-        stack: flare:3.0
+        stack: flare:4.0
         compute: runnable-default
         tags:
-          - dataos.ott
+          - ott.contract
         title: Metrics and checks
         description: The job performs metrics calculations and checks on contract data
         flare:

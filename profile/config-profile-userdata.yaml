@@ -2,20 +2,20 @@ version: v1
 name: wf-profile-ott-user
 type: workflow
 tags:
-  - dataos.ott
+  - ott.userdata
 description: The job performs profiling on top of ottchurn userdata data
 workflow:
-  title: userdata Profiler
+  title: OTT Userdata Profiler
   dag:
     - name: profile-ottchurn-userdata
-      title: userdata Data Profiler
+      title: Userdata Data Profiler
       description: The job performs profiling on userdata data
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.userdata
+        stack: flare:4.0
         compute: runnable-default
-        title: userdata Data Profiler
+        title: Userdata Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides

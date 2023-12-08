@@ -2,7 +2,7 @@ version: v1
 name: wf-complaints-quality
 type: workflow
 tags:
-  - dataos.ott
+  - ott.complaints
 description: The job performs metrics calculations and checks on complaints data
 workflow:
   title: Metrics and checks
@@ -11,10 +11,10 @@ workflow:
       title: Metrics and checks
       description: The job performs metrics calculations and checks on complaints data
       spec:
-        stack: flare:3.0
+        stack: flare:4.0
         compute: runnable-default
         tags:
-          - dataos.ott
+          - ott.complaints
         title: Metrics and checks
         description: The job performs metrics calculations and checks on complaints data
         flare:
@@ -31,11 +31,11 @@ workflow:
 
               - sql: |
                     SELECT
-                    count(emailid) as email
+                    count(email_id) as email
                     FROM
                     ott_complaints
                     WHERE
-                    emailid IS NULL
+                    email_id IS NULL
                 tests: 
                   - email == 0 
 
@@ -54,38 +54,38 @@ workflow:
 #Verify whether the value of Complaint ID  is Unique in database
               - sql:
                     SELECT 
-                      count(complaintid) count_complaintid
+                      count(complaint_id) count_complaint_id
                     FROM
                       ott_complaints
                     GROUP BY 
-                      complaintid
+                      complaint_id
 
                 test:
-                  -count_complaintid == 1 
+                  -count_complaint_id == 1 
 
 #Verify whether the value of the Complaint ID is NOT NULL in the database
 
               - sql: |
                     SELECT
-                    count(complaintid) as complaint
+                    count(complaint_id) as complaint
                     FROM
                     ott_complaints
                     WHERE
-                    complaintid IS NULL
+                    complaint_id IS NULL
                 tests: 
                   - complaint == 0 
 
 #Verify whether the value of Customer ID  is Unique in database
               - sql:
                     SELECT 
-                      count(customerid) count_customerid
+                      count(customer_id) count_customer_id
                     FROM
                       ott_complaints
                     GROUP BY 
-                      customerid
+                      customer_id
 
                 test:
-                  -count_customerid == 1 
+                  -count_customer_id == 1 
 
 #Verify whether the value of the Customer ID is NOT NULL in the database
 
@@ -102,48 +102,48 @@ workflow:
 #Verify whether the value of Contract ID  is Unique in database
               - sql:
                     SELECT 
-                      count(contractid) count_contractid
+                      count(contract_id) count_contract_id
                     FROM
                       ott_complaints
                     GROUP BY 
                       contract-id
 
                 test:
-                  -count_contractid == 1 
+                  -count_contract_id == 1 
 
 #Verify whether the value of the Contract ID is NOT NULL in the database
 
               - sql: |
                     SELECT
-                    count(contractid) as contract
+                    count(contract_id) as contract
                     FROM
                     ott_complaints
                     WHERE
-                    contractid IS NULL
+                    contract_id IS NULL
                 tests: 
                   - contract == 0 
 
 #Verify whether the value of Content ID  is Unique in database
               - sql:
                     SELECT 
-                      count(contentid) count_contentid
+                      count(content_id) count_content_id
                     FROM
                       ott_complaints
                     GROUP BY 
-                      contentid
+                      content_id
 
                 test:
-                  -count_contentid == 1 
+                  -count_content_id == 1 
 
 #Verify whether the value of the Content ID is NOT NULL in the database
 
               - sql: |
                     SELECT
-                    count(contentid) as content
+                    count(content_id) as content
                     FROM
                     ott_complaints
                     WHERE
-                    contentid IS NULL
+                    content_id IS NULL
                 tests: 
                   - content == 0 
 

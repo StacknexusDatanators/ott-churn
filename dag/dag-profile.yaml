@@ -1,41 +1,41 @@
-version: v1beta1
-name: wf-profile-pipeline
+version: v1
+name: wf-profile-telecom-ottchurn-pipeline
 type: workflow
 tags:
-- Flare
+- profile
 description: Ingest data into Icebase
 workflow:
-  title: ottchurn Ingest Pipeline
+  title: OTT Churn Ingest Pipeline
   dag:
-  - name: profile-b2bdata
-    file: profile/config-profile-b2bdata.yaml
+    - name: profile-b2bdata
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-b2bdata.yaml
 
-  - name: profile-billing
-    file: profile/config-profile-billing.yml
-    dependencies:
-      - profile-b2bdata
+    - name: profile-billing
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-billing.yml
+      dependencies:
+        - profile-b2bdata
 
-  - name: profile-complaints
-    file: profile/config-profile-complaints.yaml
-    dependencies: 
-      - profile-billing
+    - name: profile-complaints
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-complaints.yaml
+      dependencies:
+        - profile-billing
 
-  - name: profile-contract
-    file: profile/config-profile-contract.yaml
-    dependencies: 
-      - profile-complaints
+    - name: profile-contract
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-contracts.yml
+      dependencies:
+        - profile-complaints
 
-  - name: profile-player
-    file: profile/config-profile-player.yaml
-    dependencies: 
-      - profile-contract
+    - name: profile-player
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-player.yaml
+      dependencies:
+        - profile-contract
 
-  - name: profile-userdata
-    file: profile/config-profile-userdata.yaml
-    dependencies: 
-      - profile-player
-  
-  - name: profile-data-tool
-    file: profile/data-tool-profile.yaml
-    dependencies: 
-      - profile-userdata
+    - name: profile-userdata
+      file: ott_churn_branch_2/ott-churn/profile/config-profile-userdata.yaml
+      dependencies:
+        - profile-player
+
+    - name: profile-data-tool
+      file: ott_churn_branch_2/ott-churn/profile/datatool-profiling.yml
+      dependencies:
+        - profile-userdata

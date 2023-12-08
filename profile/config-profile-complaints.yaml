@@ -2,18 +2,18 @@
   name: wf-profile-ott-complaints
   type: workflow
   tags:
-    - dataos.ott
+    - ott.complaints
   description: The job performs profiling on top of ottchurn complaints data
   workflow:
-    title: complaints Profiler
+    title: OTT Complaints Profiler
     dag:
       - name: profile-ottchurn-complaints
-        title: complaints Data Profiler
+        title: Complaints Data Profiler
         description: The job performs profiling on complaints data
         spec:
           tags:
-            - dataos.ott
-          stack: flare:3.0
+            - ott.complaints
+          stack: flare:4.0
           compute: runnable-default
           title: complaints Data Profiler
           persistentVolume:

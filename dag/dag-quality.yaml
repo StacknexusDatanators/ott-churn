@@ -1,47 +1,46 @@
-version: v1beta1
-name: wf-quality-pipeline
+version: v1
+name: wf-quality-telecom-ottchurn-pipeline
 type: workflow
 tags:
-- Flare
+  - quality
 description: Ingest data into Icebase
 workflow:
-  title: ottchurn Quality Ingest Pipeline
+  title: OTT Churn Quality Ingest Pipeline
   dag:
     - name: quality-b2bdata
-      file: quality/config-quality-b2bdata.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-b2bdata.yml
 
     - name: quality-billing
-      file: quality/config-quality-billing.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-billing.yml
       dependencies:
         - quality-b2bdata
-    
+
     - name: quality-complaints
-      file: quality/config-quality-complaints.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-complaints.yml
       dependencies:
         - quality-billing
 
     - name: quality-contract
-      file: quality/config-quality-contract.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-contract.yml
       dependencies:
         - quality-complaints
 
     - name: quality-player
-      file: quality/config-quality-player.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-player.yml
       dependencies:
         - quality-contract
 
     - name: quality-userdata
-      file: quality/config-quality-userdata.yaml
+      file: ott_churn_branch_2/ott-churn/quality/config-quality-userdata.yml
       dependencies:
         - quality-player
 
     - name: checks-data-tool
-      file: quality/checks-data-tool.yaml
+      file: ott_churn_branch_2/ott-churn/quality/checks-data-tool.yml
       dependencies:
         - quality-userdata
 
     - name: metrix-data-tool
-      file: quality/data-tool-metrix.yaml
+      file: ott_churn_branch_2/ott-churn/quality/data-tool-metrix.yml
       dependencies:
         - checks-data-tool
-

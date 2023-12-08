@@ -2,20 +2,20 @@ version: v1
 name: wf-profile-ott-contract
 type: workflow
 tags:
-  - dataos.ott
+  - ott.contract
 description: The job performs profiling on top of ottchurn contract data
 workflow:
-  title: contract Profiler
+  title: OTT Contract Profiler
   dag:
     - name: profile-ottchurn-contract
-      title: contract Data Profiler
+      title: Contract Data Profiler
       description: The job performs profiling on contract data
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.contract
+        stack: flare:4.0
         compute: runnable-default
-        title: contract Data Profiler
+        title: Contract Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides

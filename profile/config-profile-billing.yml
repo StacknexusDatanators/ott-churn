@@ -2,20 +2,20 @@ version: v1
 name: wf-profile-ott-billing
 type: workflow
 tags:
-  - dataos.ott
+  - ott.billing
 description: The job performs profiling on top of ottchurn billing data
 workflow:
-  title: billing Profiler
+  title: OTT Billing Profiler
   dag:
     - name: profile-ottchurn-billing
-      title: billing Data Profiler
+      title: Billing Data Profiler
       description: The job performs profiling on billing data
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.billing
+        stack: flare:4.0
         compute: runnable-default
-        title: billing Data Profiler
+        title: Billing Data Profiler
         persistentVolume:
           name: persistent-v
           directory: fides

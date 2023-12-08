@@ -2,18 +2,18 @@ version: v1
 name: wf-profile-ott-b2bdata
 type: workflow
 tags:
-  - dataos.ott
+  - ott.b2bdata
 description: The job performs profiling on top of ottchurn b2bdata data
 workflow:
-  title: b2bdata Profiler
+  title: OTT b2bdata Profiler
   dag:
     - name: profile-ott-churn-b2bdata
       title: b2bdata Data Profiler
       description: The job performs profiling on b2bdata data
       spec:
         tags:
-          - dataos.ott
-        stack: flare:3.0
+          - ott.b2bdata
+        stack: flare:4.0
         compute: runnable-default
         envs:
           NEW_FINGERPRINT_URL: "https://wanted-panther.dataos.app/fingerprint-classification/app/v2/fingerprint/?min_records=1"

@@ -2,7 +2,7 @@ version: v1
 name: wf-user-quality
 type: workflow
 tags:
-  - dataos.ott
+  - ott.userdata
 description: The job performs metrics calculations and  checks on userdata
 workflow:
   title: Metrics and checks
@@ -11,10 +11,10 @@ workflow:
       title: Metrics and checks
       description: The job performs metrics calculations and checks on userdata
       spec:
-        stack: flare:3.0
+        stack: flare:4.0
         compute: runnable-default
         tags:
-          - dataos.ott
+          - ott.userdata
         title: Metrics and checks
         description: The job performs metrics calculations and checks on userdata
         flare:
